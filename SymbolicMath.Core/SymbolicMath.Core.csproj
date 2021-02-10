@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>BassClefStudio.SymbolicMath.Core</AssemblyName>
+    <RootNamespace>BassClefStudio.SymbolicMath.Core</RootNamespace>
+    <Authors>BassClefStudio</Authors>
+    <Description>A library built for writing and manipulating mathematical expressions as a union of math and programming philosophies.</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Pidgin" Version="2.5.0" />
+  </ItemGroup>
+
+</Project>
