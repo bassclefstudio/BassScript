@@ -80,7 +80,7 @@ namespace BassClefStudio.SymbolicMath.Core.Parsers
         /// <inheritdoc/>
         public IExpression BuildExpression(string input)
         {
-            return Expression.Before(End).ParseOrThrow(input);
+            return Expression.ParseOrThrow(input);
         }
     }
 }

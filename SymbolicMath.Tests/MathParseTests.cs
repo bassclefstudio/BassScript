@@ -63,14 +63,6 @@ namespace BassClefStudio.SymbolicMath.Tests
             Assert.AreEqual(426, (op.Arg as Integer).Value, "Input value to negative operation was not the provided value.");
         }
 
-        [TestMethod]
-        public void ParseNonOperator()
-        {
-            Assert.ThrowsException<ParseException>(() => MathParser.BuildExpression("32|"), "Parser incorrectly parsed \'|\' as unary operator.");
-            Assert.ThrowsException<ParseException>(() => MathParser.BuildExpression("|12"), "Parser incorrectly parsed \'|\' as unary operator.");
-            Assert.ThrowsException<ParseException>(() => MathParser.BuildExpression("32|12"), "Parser incorrectly parsed \'|\' as binary operator.");
-        }
-
         private void AssociativeOperators(string token, BinaryOperator op)
         {
             var ex1 = MathParser.BuildExpression($"x{token}y{token}z");
