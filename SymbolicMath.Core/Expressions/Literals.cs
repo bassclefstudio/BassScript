@@ -40,7 +40,7 @@ namespace BassClefStudio.SymbolicMath.Core.Expressions
     /// <summary>
     /// Represents an <see cref="IExpression"/> of an integer (whole-number) value.
     /// </summary>
-    public class Integer : IExpression
+    public class IntegerExpression : IExpression
     {
         /// <summary>
         /// The stored <see cref="int"/> value.
@@ -48,10 +48,10 @@ namespace BassClefStudio.SymbolicMath.Core.Expressions
         public int Value { get; }
 
         /// <summary>
-        /// Creates a new <see cref="Integer"/>.
+        /// Creates a new <see cref="IntegerExpression"/>.
         /// </summary>
         /// <param name="value">The stored <see cref="int"/> value.</param>
-        public Integer(int value)
+        public IntegerExpression(int value)
         {
             Value = value;
         }
@@ -59,7 +59,73 @@ namespace BassClefStudio.SymbolicMath.Core.Expressions
         /// <inheritdoc/>
         public bool Equals(IExpression other)
         {
-            return other is Integer i &&
+            return other is IntegerExpression i &&
+                this.Value == i.Value;
+        }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Represents an <see cref="IExpression"/> of an double-precision numerical value.
+    /// </summary>
+    public class DoubleExpression : IExpression
+    {
+        /// <summary>
+        /// The stored <see cref="double"/> value.
+        /// </summary>
+        public double Value { get; }
+
+        /// <summary>
+        /// Creates a new <see cref="IntegerExpression"/>.
+        /// </summary>
+        /// <param name="value">The stored <see cref="double"/> value.</param>
+        public DoubleExpression(double value)
+        {
+            Value = value;
+        }
+
+        /// <inheritdoc/>
+        public bool Equals(IExpression other)
+        {
+            return other is DoubleExpression i &&
+                this.Value == i.Value;
+        }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Represents an <see cref="IExpression"/> of an double-precision numerical value.
+    /// </summary>
+    public class StringExpression : IExpression
+    {
+        /// <summary>
+        /// The stored <see cref="double"/> value.
+        /// </summary>
+        public string Value { get; }
+
+        /// <summary>
+        /// Creates a new <see cref="IntegerExpression"/>.
+        /// </summary>
+        /// <param name="value">The stored <see cref="string"/> value.</param>
+        public StringExpression(string value)
+        {
+            Value = value;
+        }
+
+        /// <inheritdoc/>
+        public bool Equals(IExpression other)
+        {
+            return other is StringExpression i &&
                 this.Value == i.Value;
         }
 

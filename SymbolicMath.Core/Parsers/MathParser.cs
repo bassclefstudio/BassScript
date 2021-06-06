@@ -49,7 +49,7 @@ namespace BassClefStudio.SymbolicMath.Core.Parsers
         public MathParser()
         {
             Integer = Token(Num)
-                .Select<IExpression>(value => new Integer(value))
+                .Select<IExpression>(value => new IntegerExpression(value))
                 .Labelled("int");
 
             Identifier = Token(Letter.Then(LetterOrDigit.ManyString(), (h, t) => h + t))

@@ -59,8 +59,8 @@ namespace BassClefStudio.SymbolicMath.Tests
             Console.WriteLine(expression);
             Assert.IsInstanceOfType(expression, typeof(UnaryOperation), "Statement returned incorrect type.");
             UnaryOperation op = expression as UnaryOperation;
-            Assert.IsInstanceOfType(op.Arg, typeof(Integer), "Argument of negative operation was not expected Integer.");
-            Assert.AreEqual(426, (op.Arg as Integer).Value, "Input value to negative operation was not the provided value.");
+            Assert.IsInstanceOfType(op.Arg, typeof(IntegerExpression), "Argument of negative operation was not expected Integer.");
+            Assert.AreEqual(426, (op.Arg as IntegerExpression).Value, "Input value to negative operation was not the provided value.");
         }
 
         private void AssociativeOperators(string token, BinaryOperator op)
@@ -98,7 +98,7 @@ namespace BassClefStudio.SymbolicMath.Tests
             Console.WriteLine(ex1);
             var ex2 = MathParser.BuildExpression("(524 + y)");
             Console.WriteLine(ex2);
-            Assert.IsInstanceOfType(ex1, typeof(Integer), "Statement returned incorrect type.");
+            Assert.IsInstanceOfType(ex1, typeof(IntegerExpression), "Statement returned incorrect type.");
             Assert.IsInstanceOfType(ex2, typeof(BinaryOperation), "Statement returned incorrect type.");
             Assert.AreEqual(BinaryOperator.Add, (ex2 as BinaryOperation).Operator, "Incorrect operator parsed.");
         }
