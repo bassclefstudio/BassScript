@@ -34,6 +34,7 @@ namespace BassClefStudio.SymbolicMath.Core.Parsers
 
         private Parser<char, Func<IExpression, IExpression, IExpression>> Set;
         private Parser<char, Func<IExpression, IExpression, IExpression>> Equate;
+        private Parser<char, Func<IExpression, IExpression, IExpression>> Property;
 
         private Parser<char, Func<IExpression, IExpression, IExpression>> EqualTo;
         private Parser<char, Func<IExpression, IExpression, IExpression>> NotEqualTo;
@@ -105,6 +106,7 @@ namespace BassClefStudio.SymbolicMath.Core.Parsers
 
             Set = Binary(Token("=").ThenReturn(BinaryOperator.Set));
             Equate = Binary(Token("=>").ThenReturn(BinaryOperator.Equate));
+            Property = Binary(Token(".").ThenReturn(BinaryOperator.Property));
 
             EqualTo = Binary(Token("==").ThenReturn(BinaryOperator.EqualTo));
             NotEqualTo = Binary(Token("!=").ThenReturn(BinaryOperator.NotEqualTo));
@@ -140,7 +142,9 @@ namespace BassClefStudio.SymbolicMath.Core.Parsers
                     .And(Operator.InfixN(GThanEq))
                     .And(Operator.InfixN(LThan))
                     .And(Operator.InfixN(LThanEq)),
+                    Operator.InfixL(Property),
                     Operator.InfixN(Set)
+                    .And(Operator.InfixN(Equate))
                 })).Labelled("expression");
         }
 

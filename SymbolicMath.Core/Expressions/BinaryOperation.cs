@@ -105,6 +105,10 @@ namespace BassClefStudio.SymbolicMath.Core.Expressions
         /// <summary>
         /// Checks whether the first value is less than or equal to the second value.
         /// </summary>
-        LThanEq = 11
+        LThanEq = 11,
+        /// <summary>
+        /// Gets the property of the second expression found within the first expression.
+        /// </summary>
+        Property = 12
     }
 }
