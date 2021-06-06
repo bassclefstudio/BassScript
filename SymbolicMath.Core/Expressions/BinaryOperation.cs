@@ -79,28 +79,32 @@ namespace BassClefStudio.SymbolicMath.Core.Expressions
         /// </summary>
         Set = 4,
         /// <summary>
+        /// Defines the two expressions to be equivalent or related (see => in C#, or = in mathematics).
+        /// </summary>
+        Equate = 5,
+        /// <summary>
         /// Checks whether the first value is equal to the second value.
         /// </summary>
-        EqualTo = 5,
+        EqualTo = 6,
         /// <summary>
         /// Checks whether the first value is not equal to the second value.
         /// </summary>
-        NotEqualTo = 6,
+        NotEqualTo = 7,
         /// <summary>
         /// Checks whether the first value is greater than the second value.
         /// </summary>
-        GThan = 7,
+        GThan = 8,
         /// <summary>
         /// Checks whether the first value is less than the second value.
         /// </summary>
-        LThan = 8,
+        LThan = 9,
         /// <summary>
         /// Checks whether the first value is greater than or equal to the second value.
         /// </summary>
-        GThanEq = 9,
+        GThanEq = 10,
         /// <summary>
         /// Checks whether the first value is less than or equal to the second value.
         /// </summary>
-        LThanEq = 10
+        LThanEq = 11
     }
 }

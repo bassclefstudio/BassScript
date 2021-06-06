@@ -31,9 +31,24 @@ namespace BassClefStudio.SymbolicMath.Core.Parsers
         private Parser<char, Func<IExpression, IExpression, IExpression>> Subtract;
         private Parser<char, Func<IExpression, IExpression, IExpression>> Multiply;
         private Parser<char, Func<IExpression, IExpression, IExpression>> Divide;
+
+        private Parser<char, Func<IExpression, IExpression, IExpression>> Set;
+        private Parser<char, Func<IExpression, IExpression, IExpression>> Equate;
+
+        private Parser<char, Func<IExpression, IExpression, IExpression>> EqualTo;
+        private Parser<char, Func<IExpression, IExpression, IExpression>> NotEqualTo;
+        private Parser<char, Func<IExpression, IExpression, IExpression>> GThan;
+        private Parser<char, Func<IExpression, IExpression, IExpression>> LThan;
+        private Parser<char, Func<IExpression, IExpression, IExpression>> GThanEq;
+        private Parser<char, Func<IExpression, IExpression, IExpression>> LThanEq;
+
         private Parser<char, Func<IExpression, IExpression>> Negative;
+        private Parser<char, Func<IExpression, IExpression>> Not;
 
         private Parser<char, IExpression> Integer;
+        private Parser<char, IExpression> Double;
+        private Parser<char, IExpression> String;
+        private Parser<char, IExpression> Boolean;
         private Parser<char, IExpression> Identifier;
 
         private Parser<char, Func<IExpression, IExpression>> Call(Parser<char, IExpression> subExpr)
@@ -52,6 +67,33 @@ namespace BassClefStudio.SymbolicMath.Core.Parsers
                 .Select<IExpression>(value => new IntegerExpression(value))
                 .Labelled("int");
 
+            var decimalParser =
+                from neg in Char('-').Optional().Select(o => o.HasValue)
+                from digits in Digit.AtLeastOnceString()
+                from d in Char('.').Then(Digit.AtLeastOnceString())
+                select double.Parse($"{(neg ? "-" : string.Empty)}{digits}.{d}");
+
+            Double = Token(decimalParser)
+                .Select<IExpression>(value => new DoubleExpression(value))
+                .Labelled("double");
+
+            var escapedString =
+                AnyCharExcept('\"', '\\')
+                .Or(Char('\\').Then(Any))
+                .ManyString()
+                .Between(Char('\"'));
+
+            String = Token(escapedString)
+                .Select<IExpression>(value => new StringExpression(value))
+                .Labelled("string");
+
+            var boolParser = String("true").ThenReturn(true)
+                .Or(String("false").ThenReturn(false));
+
+            Boolean = Token(boolParser)
+                .Select<IExpression>(value => new BoolExpression(value))
+                .Labelled("bool");
+
             Identifier = Token(Letter.Then(LetterOrDigit.ManyString(), (h, t) => h + t))
                 .Select<IExpression>(name => new Identifier(name))
                 .Labelled("identifier");
@@ -60,11 +102,26 @@ namespace BassClefStudio.SymbolicMath.Core.Parsers
             Subtract = Binary(Token("-").ThenReturn(BinaryOperator.Subtract));
             Multiply = Binary(Token("*").ThenReturn(BinaryOperator.Multiply));
             Divide = Binary(Token("/").ThenReturn(BinaryOperator.Divide));
+
+            Set = Binary(Token("=").ThenReturn(BinaryOperator.Set));
+            Equate = Binary(Token("=>").ThenReturn(BinaryOperator.Equate));
+
+            EqualTo = Binary(Token("==").ThenReturn(BinaryOperator.EqualTo));
+            NotEqualTo = Binary(Token("!=").ThenReturn(BinaryOperator.NotEqualTo));
+            GThan = Binary(Token(">").ThenReturn(BinaryOperator.GThan));
+            LThan = Binary(Token("<").ThenReturn(BinaryOperator.LThan));
+            GThanEq = Binary(Token(">=").ThenReturn(BinaryOperator.GThanEq));
+            LThanEq = Binary(Token("<=").ThenReturn(BinaryOperator.LThanEq));
+
             Negative = Unary(Token("-").ThenReturn(UnaryOperator.Negative));
+            Not = Unary(Token("!").ThenReturn(UnaryOperator.Not));
 
             Expression = ExpressionParser.Build<char, IExpression>(expr => ( 
                 OneOf(
                     Identifier,
+                    Boolean,
+                    String,
+                    Try(Double),
                     Integer,
                     Parenthesised(expr).Labelled("parenthetical")
                 ),
@@ -72,8 +129,18 @@ namespace BassClefStudio.SymbolicMath.Core.Parsers
                 {
                     Operator.PostfixChainable(Call(expr)),
                     Operator.Prefix(Negative),
-                    Operator.InfixL(Multiply).And(Operator.InfixL(Divide)),
-                    Operator.InfixL(Add).And(Operator.InfixL(Subtract))
+                    Operator.Prefix(Not),
+                    Operator.InfixL(Multiply)
+                    .And(Operator.InfixL(Divide)),
+                    Operator.InfixL(Add)
+                    .And(Operator.InfixL(Subtract)),
+                    Operator.InfixN(EqualTo)
+                    .And(Operator.InfixN(NotEqualTo))
+                    .And(Operator.InfixN(GThan))
+                    .And(Operator.InfixN(GThanEq))
+                    .And(Operator.InfixN(LThan))
+                    .And(Operator.InfixN(LThanEq)),
+                    Operator.InfixN(Set)
                 })).Labelled("expression");
         }
 
