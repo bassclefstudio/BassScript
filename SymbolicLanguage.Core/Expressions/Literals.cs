@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BassClefStudio.SymbolicMath.Core.Expressions
+namespace BassClefStudio.SymbolicLanguage.Expressions
 {
     /// <summary>
     /// Represents a variable or function declaration of any kind.

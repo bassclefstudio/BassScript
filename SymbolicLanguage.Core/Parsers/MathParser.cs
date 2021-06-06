@@ -1,4 +1,4 @@
-﻿using BassClefStudio.SymbolicMath.Core.Expressions;
+﻿using BassClefStudio.SymbolicLanguage.Expressions;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,7 +7,7 @@ using Pidgin.Expression;
 using static Pidgin.Parser;
 using static Pidgin.Parser<char>;
 
-namespace BassClefStudio.SymbolicMath.Core.Parsers
+namespace BassClefStudio.SymbolicLanguage.Parsers
 {
     /// <summary>
     /// A service that builds and provides <see cref="Pidgin.Parser"/>s for parsing <see cref="IExpression"/>s from <see cref="string"/>-based content.

@@ -1,11 +1,11 @@
-using BassClefStudio.SymbolicMath.Core.Expressions;
-using BassClefStudio.SymbolicMath.Core.Parsers;
+using BassClefStudio.SymbolicLanguage.Expressions;
+using BassClefStudio.SymbolicLanguage.Parsers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Pidgin;
 using System;
 using System.Linq;
 
-namespace BassClefStudio.SymbolicMath.Tests
+namespace BassClefStudio.SymbolicLanguage.Tests
 {
     [TestClass]
     public class MathParseTests

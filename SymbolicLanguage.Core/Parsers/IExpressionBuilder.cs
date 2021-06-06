@@ -1,9 +1,9 @@
-﻿using BassClefStudio.SymbolicMath.Core.Expressions;
+﻿using BassClefStudio.SymbolicLanguage.Expressions;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BassClefStudio.SymbolicMath.Core.Parsers
+namespace BassClefStudio.SymbolicLanguage.Parsers
 {
     /// <summary>
     /// Represents any service that can build an <see cref="IExpression"/> tree from a <typeparamref name="T"/> input.

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BassClefStudio.SymbolicMath.Core.Expressions
+namespace BassClefStudio.SymbolicLanguage.Expressions
 {
     /// <summary>
     /// Represents an <see cref="IExpression"/> which applies an <see cref="UnaryOperator"/> to a given <see cref="IExpression"/>.

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace BassClefStudio.SymbolicMath.Core.Expressions
+namespace BassClefStudio.SymbolicLanguage.Expressions
 {
     /// <summary>
     /// An <see cref="IExpression"/> which calls another <see cref="IExpression"/> with a given set of <see cref="IExpression"/> inputs.

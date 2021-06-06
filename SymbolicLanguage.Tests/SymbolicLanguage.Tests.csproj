@@ -5,9 +5,9 @@
 
     <IsPackable>false</IsPackable>
 
-    <AssemblyName>BassClefStudio.SymbolicMath.Tests</AssemblyName>
+    <AssemblyName>BassClefStudio.SymbolicLanguage.Tests</AssemblyName>
 
-    <RootNamespace>BassClefStudio.SymbolicMath.Tests</RootNamespace>
+    <RootNamespace>BassClefStudio.SymbolicLanguage.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SymbolicMath.Core\SymbolicMath.Core.csproj" />
+    <ProjectReference Include="..\SymbolicLanguage.Core\SymbolicLanguage.Core.csproj" />
   </ItemGroup>
 
 </Project>
