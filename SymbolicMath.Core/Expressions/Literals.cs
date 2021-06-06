@@ -109,7 +109,7 @@ namespace BassClefStudio.SymbolicMath.Core.Expressions
     public class StringExpression : IExpression
     {
         /// <summary>
-        /// The stored <see cref="double"/> value.
+        /// The stored <see cref="string"/> value.
         /// </summary>
         public string Value { get; }
 
@@ -126,6 +126,39 @@ namespace BassClefStudio.SymbolicMath.Core.Expressions
         public bool Equals(IExpression other)
         {
             return other is StringExpression i &&
+                this.Value == i.Value;
+        }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Represents an <see cref="IExpression"/> of an double-precision numerical value.
+    /// </summary>
+    public class BoolExpression : IExpression
+    {
+        /// <summary>
+        /// The stored <see cref="bool"/> value.
+        /// </summary>
+        public bool Value { get; }
+
+        /// <summary>
+        /// Creates a new <see cref="IntegerExpression"/>.
+        /// </summary>
+        /// <param name="value">The stored <see cref="bool"/> value.</param>
+        public BoolExpression(bool value)
+        {
+            Value = value;
+        }
+
+        /// <inheritdoc/>
+        public bool Equals(IExpression other)
+        {
+            return other is BoolExpression i &&
                 this.Value == i.Value;
         }
 

@@ -54,5 +54,9 @@ namespace BassClefStudio.SymbolicMath.Core.Expressions
         /// Gets the negative of the value of the operand.
         /// </summary>
         Negative = 0,
+        /// <summary>
+        /// Get the inverse boolean value of the operand.
+        /// </summary>
+        Not = 1
     }
 }

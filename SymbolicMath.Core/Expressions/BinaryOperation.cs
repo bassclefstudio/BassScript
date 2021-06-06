@@ -74,5 +74,33 @@ namespace BassClefStudio.SymbolicMath.Core.Expressions
         /// Divide the first value by the second value.
         /// </summary>
         Divide = 3,
+        /// <summary>
+        /// Sets the first value to the second value.
+        /// </summary>
+        Set = 4,
+        /// <summary>
+        /// Checks whether the first value is equal to the second value.
+        /// </summary>
+        EqualTo = 5,
+        /// <summary>
+        /// Checks whether the first value is not equal to the second value.
+        /// </summary>
+        NotEqualTo = 6,
+        /// <summary>
+        /// Checks whether the first value is greater than the second value.
+        /// </summary>
+        GThan = 7,
+        /// <summary>
+        /// Checks whether the first value is less than the second value.
+        /// </summary>
+        LThan = 8,
+        /// <summary>
+        /// Checks whether the first value is greater than or equal to the second value.
+        /// </summary>
+        GThanEq = 9,
+        /// <summary>
+        /// Checks whether the first value is less than or equal to the second value.
+        /// </summary>
+        LThanEq = 10
     }
 }
