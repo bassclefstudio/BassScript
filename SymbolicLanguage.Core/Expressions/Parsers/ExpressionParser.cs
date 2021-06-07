@@ -1,5 +1,4 @@
-﻿using BassClefStudio.SymbolicLanguage.Expressions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using Pidgin;
@@ -7,12 +6,12 @@ using Pidgin.Expression;
 using static Pidgin.Parser;
 using static Pidgin.Parser<char>;
 
-namespace BassClefStudio.SymbolicLanguage.Parsers
+namespace BassClefStudio.SymbolicLanguage.Expressions.Parsers
 {
     /// <summary>
     /// A service that builds and provides <see cref="Pidgin.Parser"/>s for parsing <see cref="IExpression"/>s from <see cref="string"/>-based content.
     /// </summary>
-    public class MathParser : IExpressionBuilder<string>
+    public class ExpressionParser : IExpressionBuilder<string>
     {
         private Parser<char, T> Token<T>(Parser<char, T> token)
             => Try(token).Before(SkipWhitespaces);
@@ -60,9 +59,9 @@ namespace BassClefStudio.SymbolicLanguage.Parsers
         private Parser<char, IExpression> Expression;
 
         /// <summary>
-        /// Creates and initializes a <see cref="MathParser"/> to parse mathematical expressions.
+        /// Creates and initializes a <see cref="ExpressionParser"/> to parse mathematical expressions.
         /// </summary>
-        public MathParser()
+        public ExpressionParser()
         {
             Integer = Token(Num)
                 .Select<IExpression>(value => new IntegerExpression(value))
@@ -118,7 +117,7 @@ namespace BassClefStudio.SymbolicLanguage.Parsers
             Negative = Unary(Token("-").ThenReturn(UnaryOperator.Negative));
             Not = Unary(Token("!").ThenReturn(UnaryOperator.Not));
 
-            Expression = ExpressionParser.Build<char, IExpression>(expr => ( 
+            Expression = Pidgin.Expression.ExpressionParser.Build<char, IExpression>(expr => (
                 OneOf(
                     Identifier,
                     Boolean,

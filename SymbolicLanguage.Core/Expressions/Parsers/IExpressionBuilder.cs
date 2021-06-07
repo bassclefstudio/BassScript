@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BassClefStudio.SymbolicLanguage.Parsers
+namespace BassClefStudio.SymbolicLanguage.Expressions.Parsers
 {
     /// <summary>
     /// Represents any service that can build an <see cref="IExpression"/> tree from a <typeparamref name="T"/> input.

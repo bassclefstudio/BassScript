@@ -1,5 +1,5 @@
 using BassClefStudio.SymbolicLanguage.Expressions;
-using BassClefStudio.SymbolicLanguage.Parsers;
+using BassClefStudio.SymbolicLanguage.Expressions.Parsers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Pidgin;
 using System;
@@ -10,12 +10,12 @@ namespace BassClefStudio.SymbolicLanguage.Tests
     [TestClass]
     public class MathParseTests
     {
-        public static MathParser MathParser;
+        public static ExpressionParser MathParser;
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            MathParser = new MathParser();
+            MathParser = new ExpressionParser();
         }
 
         #region Basic Parsing
@@ -119,7 +119,19 @@ namespace BassClefStudio.SymbolicLanguage.Tests
         #endregion
         #region Order of Operations
 
+        [TestMethod]
+        public void TestOrder()
+        {
+            var ex1 = MathParser.BuildExpression("50 / 5 + 7 * 5");
+            Console.WriteLine(ex1);
+        }
 
+        [TestMethod]
+        public void TestOrderWithParentheses()
+        {
+            var ex1 = MathParser.BuildExpression("50 / (5 + 7) * 5");
+            Console.WriteLine(ex1);
+        }
 
         #endregion
     }
