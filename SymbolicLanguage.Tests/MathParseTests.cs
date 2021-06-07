@@ -10,24 +10,24 @@ namespace BassClefStudio.SymbolicLanguage.Tests
     [TestClass]
     public class MathParseTests
     {
-        public static ExpressionParser MathParser;
+        public static ExpressionParser ExpressionParser;
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            MathParser = new ExpressionParser();
+            ExpressionParser = new ExpressionParser();
         }
 
         #region Basic Parsing
 
         private void TestBinary(string token, BinaryOperator op)
         {
-            var ex1 = MathParser.BuildExpression($"x{token}y");
-            var ex2 = MathParser.BuildExpression($"x {token} y");
+            var ex1 = ExpressionParser.BuildExpression($"x{token}y");
+            var ex2 = ExpressionParser.BuildExpression($"x {token} y");
             Console.WriteLine(ex1);
 
-            var ex3 = MathParser.BuildExpression($"42{token}365");
-            var ex4 = MathParser.BuildExpression($"42 {token} 365");
+            var ex3 = ExpressionParser.BuildExpression($"42{token}365");
+            var ex4 = ExpressionParser.BuildExpression($"42 {token} 365");
             Console.WriteLine(ex4);
 
             Assert.IsInstanceOfType(ex1, typeof(BinaryOperation), "Statement returned incorrect type.");
@@ -37,7 +37,7 @@ namespace BassClefStudio.SymbolicLanguage.Tests
             Assert.AreEqual(op, (ex1 as BinaryOperation).Operator, "Incorrect operator parsed.");
             Assert.IsTrue(ex1.Equals(ex2), "Whitespace caused incorrect parsing.");
             Assert.IsTrue(ex3.Equals(ex4), "Whitespace caused incorrect parsing.");
-            Assert.ThrowsException<ParseException>(() => MathParser.BuildExpression($"132{token}"));
+            Assert.ThrowsException<ParseException>(() => ExpressionParser.BuildExpression($"132{token}"));
         }
 
         [TestMethod]
@@ -55,7 +55,7 @@ namespace BassClefStudio.SymbolicLanguage.Tests
         [TestMethod]
         public void ParseNegative()
         {
-            var expression = MathParser.BuildExpression("-426");
+            var expression = ExpressionParser.BuildExpression("-426");
             Console.WriteLine(expression);
             Assert.IsInstanceOfType(expression, typeof(UnaryOperation), "Statement returned incorrect type.");
             UnaryOperation op = expression as UnaryOperation;
@@ -65,7 +65,7 @@ namespace BassClefStudio.SymbolicLanguage.Tests
 
         private void AssociativeOperators(string token, BinaryOperator op)
         {
-            var ex1 = MathParser.BuildExpression($"x{token}y{token}z");
+            var ex1 = ExpressionParser.BuildExpression($"x{token}y{token}z");
             Assert.IsInstanceOfType(ex1, typeof(BinaryOperation), "Statement returned incorrect type.");
             BinaryOperation bin1 = ex1 as BinaryOperation;
             // Left associative operators...
@@ -94,9 +94,9 @@ namespace BassClefStudio.SymbolicLanguage.Tests
         [TestMethod]
         public void ParseParenthetical()
         {
-            var ex1 = MathParser.BuildExpression("(524)");
+            var ex1 = ExpressionParser.BuildExpression("(524)");
             Console.WriteLine(ex1);
-            var ex2 = MathParser.BuildExpression("(524 + y)");
+            var ex2 = ExpressionParser.BuildExpression("(524 + y)");
             Console.WriteLine(ex2);
             Assert.IsInstanceOfType(ex1, typeof(IntegerExpression), "Statement returned incorrect type.");
             Assert.IsInstanceOfType(ex2, typeof(BinaryOperation), "Statement returned incorrect type.");
@@ -106,9 +106,9 @@ namespace BassClefStudio.SymbolicLanguage.Tests
         [TestMethod]
         public void ParseCall()
         {
-            var ex1 = MathParser.BuildExpression("f(524)");
+            var ex1 = ExpressionParser.BuildExpression("f(524)");
             Console.WriteLine(ex1);
-            var ex2 = MathParser.BuildExpression("f(524, y)");
+            var ex2 = ExpressionParser.BuildExpression("f(524, y)");
             Console.WriteLine(ex2);
             Assert.IsInstanceOfType(ex1, typeof(FunctionCall), "Statement returned incorrect type.");
             Assert.IsInstanceOfType(ex2, typeof(FunctionCall), "Statement returned incorrect type.");
@@ -122,14 +122,14 @@ namespace BassClefStudio.SymbolicLanguage.Tests
         [TestMethod]
         public void TestOrder()
         {
-            var ex1 = MathParser.BuildExpression("50 / 5 + 7 * 5");
+            var ex1 = ExpressionParser.BuildExpression("50 / 5 + 7 * 5");
             Console.WriteLine(ex1);
         }
 
         [TestMethod]
         public void TestOrderWithParentheses()
         {
-            var ex1 = MathParser.BuildExpression("50 / (5 + 7) * 5");
+            var ex1 = ExpressionParser.BuildExpression("50 / (5 + 7) * 5");
             Console.WriteLine(ex1);
         }
 

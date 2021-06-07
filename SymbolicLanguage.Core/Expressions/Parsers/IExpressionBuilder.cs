@@ -15,7 +15,7 @@ namespace BassClefStudio.SymbolicLanguage.Expressions.Parsers
         /// Builds the <see cref="IExpression"/> encoded or represented by the <typeparamref name="T"/> input.
         /// </summary>
         /// <param name="input">The <typeparamref name="T"/> content to parse.</param>
-        /// <returns>An <see cref="IExpression"/> containing the mathematical equivalent of <paramref name="input"/>.</returns>
+        /// <returns>An <see cref="IExpression"/> containing the tokenized equivalent of <paramref name="input"/>.</returns>
         IExpression BuildExpression(T input);
     }
 }

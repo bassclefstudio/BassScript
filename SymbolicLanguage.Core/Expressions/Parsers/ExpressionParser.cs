@@ -59,7 +59,7 @@ namespace BassClefStudio.SymbolicLanguage.Expressions.Parsers
         private Parser<char, IExpression> Expression;
 
         /// <summary>
-        /// Creates and initializes a <see cref="ExpressionParser"/> to parse mathematical expressions.
+        /// Creates and initializes a <see cref="ExpressionParser"/> to parse SymbolicLanguage expressions.
         /// </summary>
         public ExpressionParser()
         {
