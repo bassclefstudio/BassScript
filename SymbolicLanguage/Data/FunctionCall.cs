@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace BassClefStudio.SymbolicLanguage.Data
+﻿namespace BassClefStudio.SymbolicLanguage.Data
 {
     /// <summary>
     /// An <see cref="IExpression"/> which calls another <see cref="IExpression"/> with a given set of <see cref="IExpression"/> inputs.
@@ -40,7 +35,7 @@ namespace BassClefStudio.SymbolicLanguage.Data
         }
 
         /// <inheritdoc/>
-        public bool Equals(IExpression other)
+        public bool Equals(IExpression? other)
         {
             return other is FunctionCall call
                 && this.Expression.Equals(call.Expression)

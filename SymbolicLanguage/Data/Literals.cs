@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BassClefStudio.SymbolicLanguage.Data
+﻿namespace BassClefStudio.SymbolicLanguage.Data
 {
     /// <summary>
     /// Represents a variable or function declaration of any kind.
@@ -24,7 +20,7 @@ namespace BassClefStudio.SymbolicLanguage.Data
         }
 
         /// <inheritdoc/>
-        public bool Equals(IExpression other)
+        public bool Equals(IExpression? other)
         {
             return other is Identifier i
                 && this.Name == i.Name;
@@ -40,7 +36,7 @@ namespace BassClefStudio.SymbolicLanguage.Data
     /// <summary>
     /// Represents an <see cref="IExpression"/> of an integer (whole-number) value.
     /// </summary>
-    public class IntegerExpression : IExpression
+    public class IntegerExpression : IExpression<int>
     {
         /// <summary>
         /// The stored <see cref="int"/> value.
@@ -57,7 +53,7 @@ namespace BassClefStudio.SymbolicLanguage.Data
         }
 
         /// <inheritdoc/>
-        public bool Equals(IExpression other)
+        public bool Equals(IExpression? other)
         {
             return other is IntegerExpression i &&
                 this.Value == i.Value;
@@ -73,7 +69,7 @@ namespace BassClefStudio.SymbolicLanguage.Data
     /// <summary>
     /// Represents an <see cref="IExpression"/> of an double-precision numerical value.
     /// </summary>
-    public class DoubleExpression : IExpression
+    public class DoubleExpression : IExpression<double>
     {
         /// <summary>
         /// The stored <see cref="double"/> value.
@@ -90,7 +86,7 @@ namespace BassClefStudio.SymbolicLanguage.Data
         }
 
         /// <inheritdoc/>
-        public bool Equals(IExpression other)
+        public bool Equals(IExpression? other)
         {
             return other is DoubleExpression i &&
                 this.Value == i.Value;
@@ -106,7 +102,7 @@ namespace BassClefStudio.SymbolicLanguage.Data
     /// <summary>
     /// Represents an <see cref="IExpression"/> of an double-precision numerical value.
     /// </summary>
-    public class StringExpression : IExpression
+    public class StringExpression : IExpression<string>
     {
         /// <summary>
         /// The stored <see cref="string"/> value.
@@ -123,7 +119,7 @@ namespace BassClefStudio.SymbolicLanguage.Data
         }
 
         /// <inheritdoc/>
-        public bool Equals(IExpression other)
+        public bool Equals(IExpression? other)
         {
             return other is StringExpression i &&
                 this.Value == i.Value;
@@ -139,7 +135,7 @@ namespace BassClefStudio.SymbolicLanguage.Data
     /// <summary>
     /// Represents an <see cref="IExpression"/> of an double-precision numerical value.
     /// </summary>
-    public class BoolExpression : IExpression
+    public class BoolExpression : IExpression<bool>
     {
         /// <summary>
         /// The stored <see cref="bool"/> value.
@@ -156,7 +152,7 @@ namespace BassClefStudio.SymbolicLanguage.Data
         }
 
         /// <inheritdoc/>
-        public bool Equals(IExpression other)
+        public bool Equals(IExpression? other)
         {
             return other is BoolExpression i &&
                 this.Value == i.Value;

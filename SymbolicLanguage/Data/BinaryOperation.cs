@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BassClefStudio.SymbolicLanguage.Data
+﻿namespace BassClefStudio.SymbolicLanguage.Data
 {
     /// <summary>
     /// Represents an <see cref="IExpression"/> which applies an <see cref="UnaryOperator"/> to a given <see cref="IExpression"/>.
@@ -38,7 +34,7 @@ namespace BassClefStudio.SymbolicLanguage.Data
         }
 
         /// <inheritdoc/>
-        public bool Equals(IExpression other)
+        public bool Equals(IExpression? other)
         {
             return other is BinaryOperation op
                 && ArgA.Equals(op.ArgA)
@@ -107,8 +103,16 @@ namespace BassClefStudio.SymbolicLanguage.Data
         /// </summary>
         LThanEq = 11,
         /// <summary>
+        /// Executes the logical AND function on two boolean values.
+        /// </summary>
+        And = 12,
+        /// <summary>
+        /// Executes the logical OR function on two boolean values.
+        /// </summary>
+        Or = 13,
+        /// <summary>
         /// Gets the property of the second expression found within the first expression.
         /// </summary>
-        Property = 12
+        Property = 15
     }
 }

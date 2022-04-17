@@ -2,15 +2,13 @@ using BassClefStudio.SymbolicLanguage.Data;
 using BassClefStudio.SymbolicLanguage.Parsers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Pidgin;
-using System;
-using System.Linq;
 
 namespace BassClefStudio.SymbolicLanguage.Tests
 {
     [TestClass]
     public class MathParseTests
     {
-        public static ExpressionParser ExpressionParser;
+        public static ExpressionParser? ExpressionParser;
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
@@ -22,6 +20,7 @@ namespace BassClefStudio.SymbolicLanguage.Tests
 
         private void TestBinary(string token, BinaryOperator op)
         {
+            if (ExpressionParser is null) throw new InvalidOperationException("Parser being tested cannot be null.");
             var ex1 = ExpressionParser.BuildExpression($"x{token}y");
             var ex2 = ExpressionParser.BuildExpression($"x {token} y");
             Console.WriteLine(ex1);
@@ -34,7 +33,7 @@ namespace BassClefStudio.SymbolicLanguage.Tests
             Assert.IsInstanceOfType(ex2, typeof(BinaryOperation), "Statement returned incorrect type.");
             Assert.IsInstanceOfType(ex3, typeof(BinaryOperation), "Statement returned incorrect type.");
             Assert.IsInstanceOfType(ex4, typeof(BinaryOperation), "Statement returned incorrect type.");
-            Assert.AreEqual(op, (ex1 as BinaryOperation).Operator, "Incorrect operator parsed.");
+            Assert.AreEqual(op, (ex1 as BinaryOperation)?.Operator, "Incorrect operator parsed.");
             Assert.IsTrue(ex1.Equals(ex2), "Whitespace caused incorrect parsing.");
             Assert.IsTrue(ex3.Equals(ex4), "Whitespace caused incorrect parsing.");
             Assert.ThrowsException<ParseException>(() => ExpressionParser.BuildExpression($"132{token}"));
@@ -55,28 +54,29 @@ namespace BassClefStudio.SymbolicLanguage.Tests
         [TestMethod]
         public void ParseNegative()
         {
+            if (ExpressionParser is null) throw new InvalidOperationException("Parser being tested cannot be null.");
             var expression = ExpressionParser.BuildExpression("-426");
             Console.WriteLine(expression);
             Assert.IsInstanceOfType(expression, typeof(UnaryOperation), "Statement returned incorrect type.");
-            UnaryOperation op = expression as UnaryOperation;
-            Assert.IsInstanceOfType(op.Arg, typeof(IntegerExpression), "Argument of negative operation was not expected Integer.");
-            Assert.AreEqual(426, (op.Arg as IntegerExpression).Value, "Input value to negative operation was not the provided value.");
+            UnaryOperation? op = expression as UnaryOperation;
+            Assert.IsInstanceOfType(op?.Arg, typeof(IntegerExpression), "Argument of negative operation was not expected Integer.");
+            Assert.AreEqual(426, (op?.Arg as IntegerExpression)?.Value, "Input value to negative operation was not the provided value.");
         }
 
         private void AssociativeOperators(string token, BinaryOperator op)
         {
-            var ex1 = ExpressionParser.BuildExpression($"x{token}y{token}z");
+            var ex1 = ExpressionParser?.BuildExpression($"x{token}y{token}z");
             Assert.IsInstanceOfType(ex1, typeof(BinaryOperation), "Statement returned incorrect type.");
-            BinaryOperation bin1 = ex1 as BinaryOperation;
+            BinaryOperation? bin1 = ex1 as BinaryOperation;
             // Left associative operators...
-            Assert.IsInstanceOfType(bin1.ArgA, typeof(BinaryOperation), "Statement returned incorrect type.");
-            BinaryOperation bin2 = bin1.ArgA as BinaryOperation;
-            Assert.AreEqual(op, bin1.Operator, "Incorrect operator parsed.");
-            Assert.AreEqual(op, bin2.Operator, "Incorrect operator parsed.");
+            Assert.IsInstanceOfType(bin1?.ArgA, typeof(BinaryOperation), "Statement returned incorrect type.");
+            BinaryOperation? bin2 = bin1?.ArgA as BinaryOperation;
+            Assert.AreEqual(op, bin1?.Operator, "Incorrect operator parsed.");
+            Assert.AreEqual(op, bin2?.Operator, "Incorrect operator parsed.");
 
-            Assert.IsInstanceOfType(bin2.ArgA, typeof(Identifier), "Operand was parsed incorrectly.");
-            Assert.IsInstanceOfType(bin2.ArgB, typeof(Identifier), "Operand was parsed incorrectly.");
-            Assert.IsInstanceOfType(bin1.ArgB, typeof(Identifier), "Operand was parsed incorrectly.");
+            Assert.IsInstanceOfType(bin2?.ArgA, typeof(Identifier), "Operand was parsed incorrectly.");
+            Assert.IsInstanceOfType(bin2?.ArgB, typeof(Identifier), "Operand was parsed incorrectly.");
+            Assert.IsInstanceOfType(bin1?.ArgB, typeof(Identifier), "Operand was parsed incorrectly.");
         }
 
         [TestMethod]
@@ -94,26 +94,28 @@ namespace BassClefStudio.SymbolicLanguage.Tests
         [TestMethod]
         public void ParseParenthetical()
         {
+            if (ExpressionParser is null) throw new InvalidOperationException("Parser being tested cannot be null.");
             var ex1 = ExpressionParser.BuildExpression("(524)");
             Console.WriteLine(ex1);
             var ex2 = ExpressionParser.BuildExpression("(524 + y)");
             Console.WriteLine(ex2);
             Assert.IsInstanceOfType(ex1, typeof(IntegerExpression), "Statement returned incorrect type.");
             Assert.IsInstanceOfType(ex2, typeof(BinaryOperation), "Statement returned incorrect type.");
-            Assert.AreEqual(BinaryOperator.Add, (ex2 as BinaryOperation).Operator, "Incorrect operator parsed.");
+            Assert.AreEqual(BinaryOperator.Add, (ex2 as BinaryOperation)?.Operator, "Incorrect operator parsed.");
         }
 
         [TestMethod]
         public void ParseCall()
         {
+            if (ExpressionParser is null) throw new InvalidOperationException("Parser being tested cannot be null.");
             var ex1 = ExpressionParser.BuildExpression("f(524)");
             Console.WriteLine(ex1);
             var ex2 = ExpressionParser.BuildExpression("f(524, y)");
             Console.WriteLine(ex2);
             Assert.IsInstanceOfType(ex1, typeof(FunctionCall), "Statement returned incorrect type.");
             Assert.IsInstanceOfType(ex2, typeof(FunctionCall), "Statement returned incorrect type.");
-            Assert.AreEqual(1, (ex1 as FunctionCall).Inputs.Count(), "Incorrect number of function inputs.");
-            Assert.AreEqual(2, (ex2 as FunctionCall).Inputs.Count(), "Incorrect number of function inputs.");
+            Assert.AreEqual(1, (ex1 as FunctionCall)?.Inputs.Count(), "Incorrect number of function inputs.");
+            Assert.AreEqual(2, (ex2 as FunctionCall)?.Inputs.Count(), "Incorrect number of function inputs.");
         }
 
         #endregion
@@ -122,6 +124,7 @@ namespace BassClefStudio.SymbolicLanguage.Tests
         [TestMethod]
         public void TestOrder()
         {
+            if (ExpressionParser is null) throw new InvalidOperationException("Parser being tested cannot be null.");
             var ex1 = ExpressionParser.BuildExpression("50 / 5 + 7 * 5");
             Console.WriteLine(ex1);
         }
@@ -129,6 +132,7 @@ namespace BassClefStudio.SymbolicLanguage.Tests
         [TestMethod]
         public void TestOrderWithParentheses()
         {
+            if (ExpressionParser is null) throw new InvalidOperationException("Parser being tested cannot be null.");
             var ex1 = ExpressionParser.BuildExpression("50 / (5 + 7) * 5");
             Console.WriteLine(ex1);
         }

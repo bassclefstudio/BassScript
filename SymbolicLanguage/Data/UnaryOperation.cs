@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BassClefStudio.SymbolicLanguage.Data
+﻿namespace BassClefStudio.SymbolicLanguage.Data
 {
     /// <summary>
     /// Represents an <see cref="IExpression"/> which applies an <see cref="UnaryOperator"/> to a given <see cref="IExpression"/>.
@@ -31,7 +27,7 @@ namespace BassClefStudio.SymbolicLanguage.Data
         }
 
         /// <inheritdoc/>
-        public bool Equals(IExpression other)
+        public bool Equals(IExpression? other)
         {
             return other is UnaryOperation op
                 && Arg.Equals(op.Arg)

@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AssemblyName>BassClefStudio.SymbolicLanguage.Core</AssemblyName>
+		<RootNamespace>BassClefStudio.SymbolicLanguage</RootNamespace>
+		<Authors>BassClefStudio</Authors>
+		<Description>The core library for the SymbolicLanguage project, designed to create a cross-platform math and programming language and toolset.</Description>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Diagnostics" Version="7.1.2" />
+		<PackageReference Include="Pidgin" Version="2.5.0" />
+	</ItemGroup>
+
+</Project>
