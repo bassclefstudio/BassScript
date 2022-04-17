@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using BassClefStudio.SymbolicLanguage.Data;
 using Pidgin;
 using Pidgin.Expression;
 using static Pidgin.Parser;
 using static Pidgin.Parser<char>;
 
-namespace BassClefStudio.SymbolicLanguage.Expressions.Parsers
+namespace BassClefStudio.SymbolicLanguage.Parsers
 {
     /// <summary>
     /// A service that builds and provides <see cref="Pidgin.Parser"/>s for parsing <see cref="IExpression"/>s from <see cref="string"/>-based content.
     /// </summary>
-    public class ExpressionParser : IExpressionBuilder<string>
+    public class ExpressionParser
     {
         private Parser<char, T> Token<T>(Parser<char, T> token)
             => Try(token).Before(SkipWhitespaces);

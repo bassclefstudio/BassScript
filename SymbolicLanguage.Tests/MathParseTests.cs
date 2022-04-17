@@ -1,5 +1,5 @@
-using BassClefStudio.SymbolicLanguage.Expressions;
-using BassClefStudio.SymbolicLanguage.Expressions.Parsers;
+using BassClefStudio.SymbolicLanguage.Data;
+using BassClefStudio.SymbolicLanguage.Parsers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Pidgin;
 using System;

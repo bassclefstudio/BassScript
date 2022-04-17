@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BassClefStudio.SymbolicLanguage.Expressions
+namespace BassClefStudio.SymbolicLanguage.Data
 {
     /// <summary>
     /// Represents a basic token of any type.
