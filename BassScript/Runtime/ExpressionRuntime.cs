@@ -11,7 +11,7 @@ namespace BassClefStudio.BassScript.Runtime
         #region Execution
 
         /// <inheritdoc/>
-        public async Task<object?> ExecuteAsync(IExpression expression, IRuntimeObject context)
+        public async Task<object?> ExecuteAsync(IExpression expression, RuntimeContext context)
         {
             return expression switch
             {
@@ -30,10 +30,10 @@ namespace BassClefStudio.BassScript.Runtime
         /// Executes a <see cref="RuntimeMethod"/> encapsulated by the provided <see cref="IExpression"/>.
         /// </summary>
         /// <param name="method">The <see cref="FunctionCall"/> call to the <see cref="RuntimeMethod"/> method.</param>
-        /// <param name="context">The <see cref="IRuntimeObject"/> context for evaluating <see cref="IExpression"/>s.</param>
+        /// <param name="context">The <see cref="RuntimeContext"/> context for evaluating <see cref="IExpression"/>s.</param>
         /// <returns>The <see cref="object"/> result of the method call.</returns>
         /// <exception cref="RuntimeException">The <see cref="RuntimeMethod"/> could not be located, or failed to execute.</exception>
-        private async Task<object?> ExecuteAsync(FunctionCall method, IRuntimeObject context)
+        private async Task<object?> ExecuteAsync(FunctionCall method, RuntimeContext context)
         {
             IExpression[] inputs = method.Inputs.ToArray();
             object? methodObject = await ExecuteAsync(method.Expression, context);
@@ -45,7 +45,7 @@ namespace BassClefStudio.BassScript.Runtime
                     inputObjects[i] = await ExecuteAsync(inputs[i], context);
                 }
 
-                return await runtimeMethod(inputObjects);
+                return await runtimeMethod(context, inputObjects);
             }
             else
             {
@@ -57,10 +57,10 @@ namespace BassClefStudio.BassScript.Runtime
         /// Evaluates a <see cref="BinaryOperation"/>.
         /// </summary>
         /// <param name="binary">The <see cref="BinaryOperation"/> to evaluate.</param>
-        /// <param name="context">The <see cref="IRuntimeObject"/> context for evaluating <see cref="IExpression"/>s.</param>
+        /// <param name="context">The <see cref="RuntimeContext"/> context for evaluating <see cref="IExpression"/>s.</param>
         /// <returns>The <see cref="object"/> result of the operation.</returns>
         /// <exception cref="RuntimeException">The operation was not supported by the current <see cref="IExpressionRuntime"/>.</exception>
-        private async Task<object?> ExecuteAsync(BinaryOperation binary, IRuntimeObject context)
+        private async Task<object?> ExecuteAsync(BinaryOperation binary, RuntimeContext context)
         {
             if (binary.Operator == BinaryOperator.Property)
             {
@@ -73,7 +73,7 @@ namespace BassClefStudio.BassScript.Runtime
                 {
                     if (left is IRuntimeObject runtimeObject)
                     {
-                        return await ExecuteAsync(binary.ArgB, runtimeObject);
+                        return await ExecuteAsync(binary.ArgB, context.SetSelf(runtimeObject));
                     }
                     else
                     {
@@ -85,8 +85,8 @@ namespace BassClefStudio.BassScript.Runtime
             {
                 if (binary.ArgA is Identifier id)
                 {
-                    object? right = await ExecuteAsync(binary.ArgB, context);
-                    return new VarBinding(async data => data[id.Name] = right);
+                    context[id.Name] = await ExecuteAsync(binary.ArgB, context);
+                    return null;
                 }
                 else
                 {
@@ -97,15 +97,8 @@ namespace BassClefStudio.BassScript.Runtime
             {
                 if (binary.ArgA is Identifier id)
                 {
-                    object? right = await ExecuteAsync(binary.ArgB, context);
-                    if (right is RuntimeMethod method)
-                    {
-                        return new VarBinding(data => data[id.Name] = method);
-                    }
-                    else
-                    {
-                        return new VarBinding(data => data[id.Name] = new RuntimeMethod(async inputs => await ExecuteAsync(binary.ArgB, data)));
-                    }
+                    context[id.Name] = new RuntimeMethod(async (context, inputs) => await ExecuteAsync(binary.ArgB, context));
+                    return null;
                 }
                 else
                 {
@@ -200,10 +193,10 @@ namespace BassClefStudio.BassScript.Runtime
         /// Evaluates an <see cref="UnaryOperation"/>.
         /// </summary>
         /// <param name="unary">The <see cref="UnaryOperation"/> to evaluate.</param>
-        /// <param name="context">The <see cref="IRuntimeObject"/> context for evaluating <see cref="IExpression"/>s.</param>
+        /// <param name="context">The <see cref="RuntimeContext"/> context for evaluating <see cref="IExpression"/>s.</param>
         /// <returns>The <see cref="object"/> result of the operation.</returns>
         /// <exception cref="RuntimeException">The operation was not supported by the current <see cref="IExpressionRuntime"/>.</exception>
-        private async Task<object?> ExecuteAsync(UnaryOperation unary, IRuntimeObject context)
+        private async Task<object?> ExecuteAsync(UnaryOperation unary, RuntimeContext context)
         {
             object? parameter = await ExecuteAsync(unary.Arg, context);
             if (parameter is int i)
