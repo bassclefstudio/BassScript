@@ -1,10 +1,10 @@
-﻿using BassClefStudio.SymbolicLanguage.Data;
+﻿using BassClefStudio.BassScript.Data;
 using Pidgin;
 using Pidgin.Expression;
 using static Pidgin.Parser;
 using static Pidgin.Parser<char>;
 
-namespace BassClefStudio.SymbolicLanguage.Parsers
+namespace BassClefStudio.BassScript.Parsers
 {
     /// <summary>
     /// A service that builds and provides <see cref="Pidgin.Parser"/>s for parsing <see cref="IExpression"/>s from <see cref="string"/>-based content.

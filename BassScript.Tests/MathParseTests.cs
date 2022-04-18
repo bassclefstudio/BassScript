@@ -1,9 +1,9 @@
-using BassClefStudio.SymbolicLanguage.Data;
-using BassClefStudio.SymbolicLanguage.Parsers;
+using BassClefStudio.BassScript.Data;
+using BassClefStudio.BassScript.Parsers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Pidgin;
 
-namespace BassClefStudio.SymbolicLanguage.Tests
+namespace BassClefStudio.BassScript.Tests
 {
     [TestClass]
     public class MathParseTests

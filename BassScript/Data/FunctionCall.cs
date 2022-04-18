@@ -1,4 +1,4 @@
-﻿namespace BassClefStudio.SymbolicLanguage.Data
+﻿namespace BassClefStudio.BassScript.Data
 {
     /// <summary>
     /// An <see cref="IExpression"/> which calls another <see cref="IExpression"/> with a given set of <see cref="IExpression"/> inputs.

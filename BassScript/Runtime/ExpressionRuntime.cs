@@ -1,7 +1,7 @@
-﻿using BassClefStudio.SymbolicLanguage.Data;
+﻿using BassClefStudio.BassScript.Data;
 using CommunityToolkit.Diagnostics;
 
-namespace BassClefStudio.SymbolicLanguage.Runtime
+namespace BassClefStudio.BassScript.Runtime
 {
     /// <summary>
     /// A basic implementation of <see cref="IExpressionRuntime"/> which can execute <see cref="IExpression"/> expressions.
@@ -262,11 +262,55 @@ namespace BassClefStudio.SymbolicLanguage.Runtime
                 }
                 else
                 {
-                    throw new ArgumentException("Cannot use let binding on an object that is not an Action<IRuntimeObject>.");
+                    throw new ArgumentException("Cannot use let binding on an object that is not a VarBinding.");
+                }
+            };
+        }
+        
+        /// <summary>
+        /// Creates a <see cref="RuntimeMethod"/> which runs a LINQ Select expression.
+        /// </summary>
+        /// <returns>The resulting <see cref="RuntimeMethod"/>.</returns>
+        /// <exception cref="ArgumentException">An <see cref="Exception"/> thrown if the inputs to the <see cref="RuntimeMethod"/> are not of the valid type.</exception>
+        public static RuntimeMethod Select()
+        {
+            return async inputs => {
+                Guard.HasSizeEqualTo(inputs, 2, nameof(inputs));
+                object? collection = inputs[0];
+                Guard.IsNotNull(collection, nameof(inputs));
+                if (collection is IEnumerable<object?> items)
+                {
+                    object? condition = inputs[1];
+                    Guard.IsNotNull(condition, nameof(inputs));
+                    if (condition is RuntimeMethod method)
+                    {
+                        return await Task.WhenAll(items.Select(async s => await method(new[] { s })));
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Select requires a collection and a Func<bool> as inputs.");
+                    }
+                }
+                else
+                {
+                    throw new ArgumentException("Select requires a collection and a Func<bool> as inputs.");
                 }
             };
         }
 
+        private static async Task<T> As<T>(RuntimeMethod method, object?[] inputs)
+        {
+            object? result = await method(inputs);
+            if (result is T tResult)
+            {
+                return tResult;
+            }
+            else
+            {
+                throw new InvalidCastException($"Could not cast the result of a method as {typeof(T)} - returned {result} instead.");
+            }
+        }
+        
         #endregion
     }
 }

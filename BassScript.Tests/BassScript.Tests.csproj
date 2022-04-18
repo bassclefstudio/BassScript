@@ -6,8 +6,8 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<AssemblyName>BassClefStudio.SymbolicLanguage.Tests</AssemblyName>
-		<RootNamespace>BassClefStudio.SymbolicLanguage.Tests</RootNamespace>
+		<AssemblyName>BassClefStudio.BassScript.Tests</AssemblyName>
+		<RootNamespace>BassClefStudio.BassScript.Tests</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -21,6 +21,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\SymbolicLanguage\SymbolicLanguage.csproj" />
+		<ProjectReference Include="..\BassScript\BassScript.csproj" />
 	</ItemGroup>
 </Project>

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32210.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SymbolicLanguage.Tests", "SymbolicLanguage.Tests\SymbolicLanguage.Tests.csproj", "{F1B1CD33-FD62-4FEA-85E5-C6F55C4707DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BassScript.Tests", "BassScript.Tests\BassScript.Tests.csproj", "{F1B1CD33-FD62-4FEA-85E5-C6F55C4707DE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SymbolicLanguage", "SymbolicLanguage\SymbolicLanguage.csproj", "{5AA4A743-F894-4B71-AF92-D339935AA427}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BassScript", "BassScript\BassScript.csproj", "{5AA4A743-F894-4B71-AF92-D339935AA427}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

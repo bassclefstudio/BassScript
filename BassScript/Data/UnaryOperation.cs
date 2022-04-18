@@ -1,4 +1,4 @@
-﻿namespace BassClefStudio.SymbolicLanguage.Data
+﻿namespace BassClefStudio.BassScript.Data
 {
     /// <summary>
     /// Represents an <see cref="IExpression"/> which applies an <see cref="UnaryOperator"/> to a given <see cref="IExpression"/>.

@@ -1,4 +1,4 @@
-﻿namespace BassClefStudio.SymbolicLanguage.Data
+﻿namespace BassClefStudio.BassScript.Data
 {
     /// <summary>
     /// Represents a basic token of any type.

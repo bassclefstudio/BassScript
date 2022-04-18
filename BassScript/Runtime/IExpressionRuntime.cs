@@ -1,11 +1,11 @@
-﻿using BassClefStudio.SymbolicLanguage.Data;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BassClefStudio.BassScript.Data;
 
-namespace BassClefStudio.SymbolicLanguage.Runtime
+namespace BassClefStudio.BassScript.Runtime
 {
     /// <summary>
     /// Provides a means for running and evaluating <see cref="IExpression"/>s within a given context. 

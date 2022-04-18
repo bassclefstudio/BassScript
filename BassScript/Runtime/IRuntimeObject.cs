@@ -1,11 +1,11 @@
-﻿using BassClefStudio.SymbolicLanguage.Data;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BassClefStudio.BassScript.Data;
 
-namespace BassClefStudio.SymbolicLanguage.Runtime
+namespace BassClefStudio.BassScript.Runtime
 {
     /// <summary>
     /// Represents a complex data object held within an <see cref="IExpression"/>, which contains one or more data fields or methods.

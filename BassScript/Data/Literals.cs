@@ -1,4 +1,4 @@
-﻿namespace BassClefStudio.SymbolicLanguage.Data
+﻿namespace BassClefStudio.BassScript.Data
 {
     /// <summary>
     /// Represents a variable or function declaration of any kind.
