@@ -12,69 +12,67 @@ namespace BassClefStudio.SymbolicLanguage.Runtime
     public record RuntimeContext : IRuntimeObject
     {
         /// <summary>
-        /// Contains the collection of <see cref="IRuntimeObject"/> layers used to resolve values in the <see cref="IRuntimeContext"/>.
+        /// 
         /// </summary>
-        protected Stack<IRuntimeObject> Stack { get; }
+        public IDictionary<string, object?> Core { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public IDictionary<string, object?> Local { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public IRuntimeObject? Me { get; private set; }
 
         /// <inheritdoc/>
         public object? this[string key]
         {
             get
             {
-                foreach (var data in Stack)
-                {
-                    try
-                    {
-                        return data[key];
-                    }
-                    catch (KeyNotFoundException)
-                    { }
-                }
-                throw new KeyNotFoundException($"Could not find \"{key}\" in the current context.");
+                if (key == "this") return Me;
+                else if (Local.ContainsKey(key)) return Local[key];
+                else if (Core.ContainsKey(key)) return Core[key];
+                else if (Me is not null) return Me[key];
+                else throw new KeyNotFoundException($"Property \"{key}\" was not found in the current context.");
             }
-            set => Stack.Peek()[key] = value;
+            set
+            {
+                Local[key] = value;
+            }
         }
-
+        
         /// <summary>
-        /// Creates a new empty <see cref="RuntimeContext"/>.
+        /// Creates a new, empty <see cref="RuntimeContext"/>.
         /// </summary>
         public RuntimeContext()
         {
-            Stack = new Stack<IRuntimeObject>();
+            Core = new Dictionary<string, object?>();
+            Local = new Dictionary<string, object?>();
+            Me = null;
         }
 
         /// <summary>
-        /// Creates a new <see cref="RuntimeContext"/> from a collection of <see cref="IRuntimeObject"/>s.
+        /// Creates a new <see cref="RuntimeContext"/> with initialized values.
         /// </summary>
-        /// <param name="stack">The <see cref="IRuntimeObject"/> context layers of the current <see cref="IRuntimeContext"/>.</param>
-        public RuntimeContext(IEnumerable<IRuntimeObject> stack)
+        /// <param name="core"></param>
+        /// <param name="local"></param>
+        /// <param name="me"></param>
+        private RuntimeContext(IDictionary<string, object?> core, IDictionary<string, object?> local, IRuntimeObject? me)
         {
-            Stack = new Stack<IRuntimeObject>(stack);
+            Core = core;
+            Local = local;
+            Me = me;
         }
 
         /// <summary>
-        /// Pops the most recent data from the <see cref="RuntimeContext"/>.
+        /// 
         /// </summary>
-        /// <returns>The resulting <see cref="RuntimeContext"/>.</returns>
-        public RuntimeContext PopContext()
-        {
-            return new RuntimeContext(Stack.Take(Stack.Count - 1));
-        }
-
-        /// <summary>
-        /// Pushes some <see cref="IRuntimeObject"/> data to the <see cref="RuntimeContext"/>.
-        /// </summary>
-        /// <returns>The resulting <see cref="RuntimeContext"/>.</returns>
-        public RuntimeContext PushContext(IRuntimeObject data)
-        {
-            if (data is RuntimeContext context)
-            {
-                return new RuntimeContext(Stack.Concat(context.Stack));
-            }
-            else
-            {
-                return new RuntimeContext(Stack.Concat(new[] { data }));
-            }
-        }
+        /// <param name="me"></param>
+        /// <param name="locals"></param>
+        /// <returns></returns>
+        public RuntimeContext SetSelf(IRuntimeObject me, params KeyValuePair<string, object?>[] locals) 
+            => new RuntimeContext(Core, new Dictionary<string, object?>(locals), me);
     }
 }

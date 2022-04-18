@@ -45,7 +45,7 @@ namespace BassClefStudio.SymbolicLanguage.Runtime
                     inputObjects[i] = await ExecuteAsync(inputs[i], context);
                 }
 
-                return await runtimeMethod(inputObjects);
+                return await runtimeMethod(context, inputObjects);
             }
             else
             {
@@ -73,7 +73,7 @@ namespace BassClefStudio.SymbolicLanguage.Runtime
                 {
                     if (left is IRuntimeObject runtimeObject)
                     {
-                        return await ExecuteAsync(binary.ArgB, context.PushContext(runtimeObject));
+                        return await ExecuteAsync(binary.ArgB, context.SetSelf(runtimeObject));
                     }
                     else
                     {
@@ -97,7 +97,7 @@ namespace BassClefStudio.SymbolicLanguage.Runtime
             {
                 if (binary.ArgA is Identifier id)
                 {
-                    context[id.Name] = new RuntimeMethod(async inputs => await ExecuteAsync(binary.ArgB, context));
+                    context[id.Name] = new RuntimeMethod(async (context, inputs) => await ExecuteAsync(binary.ArgB, context));
                     return null;
                 }
                 else
