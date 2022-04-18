@@ -1,5 +1,6 @@
 ﻿using BassClefStudio.BassScript.Data;
 using CommunityToolkit.Diagnostics;
+using static System.String;
 
 namespace BassClefStudio.BassScript.Runtime
 {
@@ -97,7 +98,7 @@ namespace BassClefStudio.BassScript.Runtime
             {
                 if (binary.ArgA is Identifier id)
                 {
-                    context[id.Name] = new RuntimeMethod(async (context, inputs) => await ExecuteAsync(binary.ArgB, context));
+                    context[id.Name] = new RuntimeMethod(async (newContext, inputs) => await ExecuteAsync(binary.ArgB, newContext));
                     return null;
                 }
                 else
@@ -162,10 +163,10 @@ namespace BassClefStudio.BassScript.Runtime
                         BinaryOperator.EqualTo => ls == rs,
                         BinaryOperator.NotEqualTo => ls != rs,
                         BinaryOperator.Add => ls + rs,
-                        BinaryOperator.GThan => ls.CompareTo(rs) > 0,
-                        BinaryOperator.GThanEq => ls.CompareTo(rs) >= 0,
-                        BinaryOperator.LThan => ls.CompareTo(rs) < 0,
-                        BinaryOperator.LThanEq => ls.CompareTo(rs) <= 0,
+                        BinaryOperator.GThan => Compare(ls, rs, StringComparison.Ordinal) > 0,
+                        BinaryOperator.GThanEq => Compare(ls, rs, StringComparison.Ordinal) >= 0,
+                        BinaryOperator.LThan => Compare(ls, rs, StringComparison.Ordinal) < 0,
+                        BinaryOperator.LThanEq => Compare(ls, rs, StringComparison.Ordinal) <= 0,
                         _ => throw new RuntimeException(binary, $"Operator type not supported: {binary.Operator}.")
                     };
                 }
@@ -173,7 +174,7 @@ namespace BassClefStudio.BassScript.Runtime
                 {
                     return binary.Operator switch
                     {
-                        BinaryOperator.Multiply => string.Concat(Enumerable.Repeat(lc, rc)),
+                        BinaryOperator.Multiply => Concat(Enumerable.Repeat(lc, rc)),
                         _ => throw new RuntimeException(binary, $"Operator type not supported: {binary.Operator}.")
                     };
                 }
@@ -233,77 +234,6 @@ namespace BassClefStudio.BassScript.Runtime
         }
 
         #endregion
-        #endregion
-        #region Default Methods
-
-        /// <summary>
-        /// Creates a <see cref="RuntimeMethod"/> for the given <see cref="IRuntimeObject"/> which sets the given variable binding.
-        /// </summary>
-        /// <param name="me">The <see cref="IRuntimeObject"/> used as context ('this') for the binding operation.</param>
-        /// <returns>The resulting <see cref="RuntimeMethod"/>.</returns>
-        /// <exception cref="ArgumentException">An <see cref="Exception"/> thrown if the input to the <see cref="RuntimeMethod"/> is not a valid <see cref="VarBinding"/>.</exception>
-        public static RuntimeMethod Let(IRuntimeObject me)
-        {
-            return async inputs => {
-                Guard.HasSizeEqualTo(inputs, 1, nameof(inputs));
-                object? letBinding = inputs[0];
-                Guard.IsNotNull(letBinding, nameof(inputs));
-                if (letBinding is VarBinding binding)
-                {
-                    binding(me);
-                    return null;
-                }
-                else
-                {
-                    throw new ArgumentException("Cannot use let binding on an object that is not a VarBinding.");
-                }
-            };
-        }
-        
-        /// <summary>
-        /// Creates a <see cref="RuntimeMethod"/> which runs a LINQ Select expression.
-        /// </summary>
-        /// <returns>The resulting <see cref="RuntimeMethod"/>.</returns>
-        /// <exception cref="ArgumentException">An <see cref="Exception"/> thrown if the inputs to the <see cref="RuntimeMethod"/> are not of the valid type.</exception>
-        public static RuntimeMethod Select()
-        {
-            return async inputs => {
-                Guard.HasSizeEqualTo(inputs, 2, nameof(inputs));
-                object? collection = inputs[0];
-                Guard.IsNotNull(collection, nameof(inputs));
-                if (collection is IEnumerable<object?> items)
-                {
-                    object? condition = inputs[1];
-                    Guard.IsNotNull(condition, nameof(inputs));
-                    if (condition is RuntimeMethod method)
-                    {
-                        return await Task.WhenAll(items.Select(async s => await method(new[] { s })));
-                    }
-                    else
-                    {
-                        throw new ArgumentException("Select requires a collection and a Func<bool> as inputs.");
-                    }
-                }
-                else
-                {
-                    throw new ArgumentException("Select requires a collection and a Func<bool> as inputs.");
-                }
-            };
-        }
-
-        private static async Task<T> As<T>(RuntimeMethod method, object?[] inputs)
-        {
-            object? result = await method(inputs);
-            if (result is T tResult)
-            {
-                return tResult;
-            }
-            else
-            {
-                throw new InvalidCastException($"Could not cast the result of a method as {typeof(T)} - returned {result} instead.");
-            }
-        }
-        
         #endregion
     }
 }
