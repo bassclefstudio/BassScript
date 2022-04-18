@@ -7,14 +7,13 @@
     { }
 
     /// <summary>
-    /// Represents an <see cref="IExpression"/> which encapsulates some <typeparamref name="T"/> data.
+    /// Represents an <see cref="IExpression"/> which encapsulates some literal data.
     /// </summary>
-    /// <typeparam name="T">The type of data this <see cref="IExpression{T}"/> holds.</typeparam>
-    public interface IExpression<out T> : IExpression
+    public interface ILiteral : IExpression
     {
         /// <summary>
-        /// The <typeparamref name="T"/> value contained within this <see cref="IExpression{T}"/>.
+        /// Gets the <see cref="object"/> data contained within this <see cref="ILiteral"/>.
         /// </summary>
-        T Value { get; }
+        object? GetValue();
     }
 }

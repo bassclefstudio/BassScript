@@ -36,7 +36,7 @@
     /// <summary>
     /// Represents an <see cref="IExpression"/> of an integer (whole-number) value.
     /// </summary>
-    public class IntegerExpression : IExpression<int>
+    public class IntegerExpression : ILiteral
     {
         /// <summary>
         /// The stored <see cref="int"/> value.
@@ -64,12 +64,15 @@
         {
             return Value.ToString();
         }
+
+        /// <inheritdoc/>
+        public object? GetValue() => Value;
     }
 
     /// <summary>
     /// Represents an <see cref="IExpression"/> of an double-precision numerical value.
     /// </summary>
-    public class DoubleExpression : IExpression<double>
+    public class DoubleExpression : ILiteral
     {
         /// <summary>
         /// The stored <see cref="double"/> value.
@@ -97,12 +100,15 @@
         {
             return Value.ToString();
         }
+
+        /// <inheritdoc/>
+        public object? GetValue() => Value;
     }
 
     /// <summary>
     /// Represents an <see cref="IExpression"/> of an double-precision numerical value.
     /// </summary>
-    public class StringExpression : IExpression<string>
+    public class StringExpression : ILiteral
     {
         /// <summary>
         /// The stored <see cref="string"/> value.
@@ -130,12 +136,15 @@
         {
             return Value.ToString();
         }
+
+        /// <inheritdoc/>
+        public object? GetValue() => Value;
     }
 
     /// <summary>
     /// Represents an <see cref="IExpression"/> of an double-precision numerical value.
     /// </summary>
-    public class BoolExpression : IExpression<bool>
+    public class BoolExpression : ILiteral
     {
         /// <summary>
         /// The stored <see cref="bool"/> value.
@@ -163,5 +172,8 @@
         {
             return Value.ToString();
         }
+
+        /// <inheritdoc/>
+        public object? GetValue() => Value;
     }
 }

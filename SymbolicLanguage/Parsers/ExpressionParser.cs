@@ -54,7 +54,10 @@ namespace BassClefStudio.SymbolicLanguage.Parsers
                 .Select<Func<IExpression, IExpression>>(args => method => new FunctionCall(method, args))
                 .Labelled("function");
 
-        private Parser<char, IExpression> Expression;
+        /// <summary>
+        /// A <see cref="Parser{TToken, T}"/> which takes in text input and parses an <see cref="IExpression"/> AST.
+        /// </summary>
+        public Parser<char, IExpression> Expression { get; }
 
         /// <summary>
         /// Creates and initializes a <see cref="ExpressionParser"/> to parse SymbolicLanguage expressions.
@@ -126,6 +129,7 @@ namespace BassClefStudio.SymbolicLanguage.Parsers
                 ),
                 new OperatorTableRow<char, IExpression>[]
                 {
+                    Operator.InfixL(Property),
                     Operator.PostfixChainable(Call(expr)),
                     Operator.Prefix(Negative),
                     Operator.Prefix(Not),
@@ -139,9 +143,8 @@ namespace BassClefStudio.SymbolicLanguage.Parsers
                     .And(Operator.InfixN(GThanEq))
                     .And(Operator.InfixN(LThan))
                     .And(Operator.InfixN(LThanEq)),
-                    Operator.InfixL(Property),
-                    Operator.InfixN(Set)
-                    .And(Operator.InfixN(Equate))
+                    Operator.InfixN(Equate)
+                    .And(Operator.InfixN(Set))
                 })).Labelled("expression");
         }
 

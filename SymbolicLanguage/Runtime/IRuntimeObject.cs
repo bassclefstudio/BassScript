@@ -13,21 +13,11 @@ namespace BassClefStudio.SymbolicLanguage.Runtime
     public interface IRuntimeObject
     {
         /// <summary>
-        /// An <see cref="IDictionary{TKey, TValue}"/> of data fields keyed with <see cref="string"/> names.
-        /// </summary>
-        IDictionary<string, object?> Fields { get; }
-
-        /// <summary>
-        /// An <see cref="IDictionary{TKey, TValue}"/> of methods which can take a set of input <see cref="object"/>s and return an output <see cref="object"/>, keyed with <see cref="string"/> names.
-        /// </summary>
-        IDictionary<string, RuntimeMethod> Methods { get; }
-
-        /// <summary>
-        /// Gets the given field or method (see <see cref="Fields"/> and <see cref="Methods"/>) associated with the given <see cref="string"/> key.
+        /// Gets or sets the given data object associated with a <see cref="string"/> key.
         /// </summary>
         /// <param name="key">The unique <see cref="string"/> key identifying the object in question.</param>
         /// <returns>The resulting <see cref="object"/> data or <see cref="RuntimeMethod"/> method.</returns>
-        object? this[string key] { get; }
+        object? this[string key] { get; set; }
     }
 
     /// <summary>

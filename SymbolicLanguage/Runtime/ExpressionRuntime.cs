@@ -19,7 +19,7 @@ namespace BassClefStudio.SymbolicLanguage.Runtime
                 UnaryOperation unary => await ExecuteAsync(unary, context),
                 FunctionCall function => await ExecuteAsync(function, context),
                 Identifier identifier => context[identifier.Name],
-                IExpression<object?> literal => literal.Value,
+                ILiteral literal => literal.GetValue(),
                 _ => throw new RuntimeException(expression, "Could not handle the provided kind of expression.")
             };
         }
@@ -45,7 +45,7 @@ namespace BassClefStudio.SymbolicLanguage.Runtime
                     inputObjects[i] = await ExecuteAsync(inputs[i], context);
                 }
 
-                return runtimeMethod(inputObjects);
+                return await runtimeMethod(inputObjects);
             }
             else
             {
@@ -86,7 +86,7 @@ namespace BassClefStudio.SymbolicLanguage.Runtime
                 if (binary.ArgA is Identifier id)
                 {
                     object? right = await ExecuteAsync(binary.ArgB, context);
-                    return new VarBinding(async data => data.Fields[id.Name] = right);
+                    return new VarBinding(async data => data[id.Name] = right);
                 }
                 else
                 {
@@ -100,11 +100,11 @@ namespace BassClefStudio.SymbolicLanguage.Runtime
                     object? right = await ExecuteAsync(binary.ArgB, context);
                     if (right is RuntimeMethod method)
                     {
-                        return new VarBinding(data => data.Methods[id.Name] = method);
+                        return new VarBinding(data => data[id.Name] = method);
                     }
                     else
                     {
-                        return new VarBinding(data => data.Methods[id.Name] = new RuntimeMethod(async inputs => await ExecuteAsync(binary.ArgB, data)));
+                        return new VarBinding(data => data[id.Name] = new RuntimeMethod(async inputs => await ExecuteAsync(binary.ArgB, data)));
                     }
                 }
                 else
