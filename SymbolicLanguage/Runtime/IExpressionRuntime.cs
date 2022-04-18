@@ -16,8 +16,8 @@ namespace BassClefStudio.SymbolicLanguage.Runtime
         /// Executes the given <see cref="IExpression"/> and returns an <see cref="object"/> result.
         /// </summary>
         /// <param name="expression">The <see cref="IExpression"/> being run.</param>
-        /// <param name="context">The <see cref="IRuntimeObject"/> which is the current context of the object where this <see cref="IExpression"/> is being evaluated.</param>
-        Task<object?> ExecuteAsync(IExpression expression, IRuntimeObject context);
+        /// <param name="context">The <see cref="RuntimeContext"/> which is the current context of the object where this <see cref="IExpression"/> is being evaluated.</param>
+        Task<object?> ExecuteAsync(IExpression expression, RuntimeContext context);
     }
 
     /// <summary>

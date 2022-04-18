@@ -23,13 +23,8 @@ namespace BassClefStudio.SymbolicLanguage.Runtime
     /// <summary>
     /// Represents an asynchronous method which can be a member of an <see cref="IRuntimeObject"/>.
     /// </summary>
+    /// <param name="context">The <see cref="RuntimeContext"/> used as the runtime context for where this <see cref="RuntimeMethod"/> is executed.</param>
     /// <param name="args">The collection of <see cref="object"/> parameters which are provided as inputs.</param>
     /// <returns>The output of the method as an <see cref="object"/>.</returns>
-    public delegate Task<object?> RuntimeMethod(object?[] args);
-
-    /// <summary>
-    /// Represents an action which can bind a given variable declaration to a provided <see cref="IRuntimeObject"/>.
-    /// </summary>
-    /// <param name="me">The context <see cref="IRuntimeObject"/> ('this') being bound to.</param>
-    public delegate void VarBinding(IRuntimeObject me);
+    public delegate Task<object?> RuntimeMethod(RuntimeContext context, object?[] args);
 }

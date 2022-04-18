@@ -11,7 +11,7 @@ namespace BassClefStudio.SymbolicLanguage.Runtime
         #region Execution
 
         /// <inheritdoc/>
-        public async Task<object?> ExecuteAsync(IExpression expression, IRuntimeObject context)
+        public async Task<object?> ExecuteAsync(IExpression expression, RuntimeContext context)
         {
             return expression switch
             {
@@ -30,10 +30,10 @@ namespace BassClefStudio.SymbolicLanguage.Runtime
         /// Executes a <see cref="RuntimeMethod"/> encapsulated by the provided <see cref="IExpression"/>.
         /// </summary>
         /// <param name="method">The <see cref="FunctionCall"/> call to the <see cref="RuntimeMethod"/> method.</param>
-        /// <param name="context">The <see cref="IRuntimeObject"/> context for evaluating <see cref="IExpression"/>s.</param>
+        /// <param name="context">The <see cref="RuntimeContext"/> context for evaluating <see cref="IExpression"/>s.</param>
         /// <returns>The <see cref="object"/> result of the method call.</returns>
         /// <exception cref="RuntimeException">The <see cref="RuntimeMethod"/> could not be located, or failed to execute.</exception>
-        private async Task<object?> ExecuteAsync(FunctionCall method, IRuntimeObject context)
+        private async Task<object?> ExecuteAsync(FunctionCall method, RuntimeContext context)
         {
             IExpression[] inputs = method.Inputs.ToArray();
             object? methodObject = await ExecuteAsync(method.Expression, context);
@@ -57,10 +57,10 @@ namespace BassClefStudio.SymbolicLanguage.Runtime
         /// Evaluates a <see cref="BinaryOperation"/>.
         /// </summary>
         /// <param name="binary">The <see cref="BinaryOperation"/> to evaluate.</param>
-        /// <param name="context">The <see cref="IRuntimeObject"/> context for evaluating <see cref="IExpression"/>s.</param>
+        /// <param name="context">The <see cref="RuntimeContext"/> context for evaluating <see cref="IExpression"/>s.</param>
         /// <returns>The <see cref="object"/> result of the operation.</returns>
         /// <exception cref="RuntimeException">The operation was not supported by the current <see cref="IExpressionRuntime"/>.</exception>
-        private async Task<object?> ExecuteAsync(BinaryOperation binary, IRuntimeObject context)
+        private async Task<object?> ExecuteAsync(BinaryOperation binary, RuntimeContext context)
         {
             if (binary.Operator == BinaryOperator.Property)
             {
@@ -73,7 +73,7 @@ namespace BassClefStudio.SymbolicLanguage.Runtime
                 {
                     if (left is IRuntimeObject runtimeObject)
                     {
-                        return await ExecuteAsync(binary.ArgB, runtimeObject);
+                        return await ExecuteAsync(binary.ArgB, context.PushContext(runtimeObject));
                     }
                     else
                     {
@@ -85,8 +85,8 @@ namespace BassClefStudio.SymbolicLanguage.Runtime
             {
                 if (binary.ArgA is Identifier id)
                 {
-                    object? right = await ExecuteAsync(binary.ArgB, context);
-                    return new VarBinding(async data => data[id.Name] = right);
+                    context[id.Name] = await ExecuteAsync(binary.ArgB, context);
+                    return null;
                 }
                 else
                 {
@@ -97,15 +97,8 @@ namespace BassClefStudio.SymbolicLanguage.Runtime
             {
                 if (binary.ArgA is Identifier id)
                 {
-                    object? right = await ExecuteAsync(binary.ArgB, context);
-                    if (right is RuntimeMethod method)
-                    {
-                        return new VarBinding(data => data[id.Name] = method);
-                    }
-                    else
-                    {
-                        return new VarBinding(data => data[id.Name] = new RuntimeMethod(async inputs => await ExecuteAsync(binary.ArgB, data)));
-                    }
+                    context[id.Name] = new RuntimeMethod(async inputs => await ExecuteAsync(binary.ArgB, context));
+                    return null;
                 }
                 else
                 {
@@ -200,10 +193,10 @@ namespace BassClefStudio.SymbolicLanguage.Runtime
         /// Evaluates an <see cref="UnaryOperation"/>.
         /// </summary>
         /// <param name="unary">The <see cref="UnaryOperation"/> to evaluate.</param>
-        /// <param name="context">The <see cref="IRuntimeObject"/> context for evaluating <see cref="IExpression"/>s.</param>
+        /// <param name="context">The <see cref="RuntimeContext"/> context for evaluating <see cref="IExpression"/>s.</param>
         /// <returns>The <see cref="object"/> result of the operation.</returns>
         /// <exception cref="RuntimeException">The operation was not supported by the current <see cref="IExpressionRuntime"/>.</exception>
-        private async Task<object?> ExecuteAsync(UnaryOperation unary, IRuntimeObject context)
+        private async Task<object?> ExecuteAsync(UnaryOperation unary, RuntimeContext context)
         {
             object? parameter = await ExecuteAsync(unary.Arg, context);
             if (parameter is int i)
@@ -242,30 +235,6 @@ namespace BassClefStudio.SymbolicLanguage.Runtime
         #endregion
         #endregion
         #region Default Methods
-
-        /// <summary>
-        /// Creates a <see cref="RuntimeMethod"/> for the given <see cref="IRuntimeObject"/> which sets the given variable binding.
-        /// </summary>
-        /// <param name="me">The <see cref="IRuntimeObject"/> used as context ('this') for the binding operation.</param>
-        /// <returns>The resulting <see cref="RuntimeMethod"/>.</returns>
-        /// <exception cref="ArgumentException">An <see cref="Exception"/> thrown if the input to the <see cref="RuntimeMethod"/> is not a valid <see cref="VarBinding"/>.</exception>
-        public static RuntimeMethod Let(IRuntimeObject me)
-        {
-            return async inputs => {
-                Guard.HasSizeEqualTo(inputs, 1, nameof(inputs));
-                object? letBinding = inputs[0];
-                Guard.IsNotNull(letBinding, nameof(inputs));
-                if (letBinding is VarBinding binding)
-                {
-                    binding(me);
-                    return null;
-                }
-                else
-                {
-                    throw new ArgumentException("Cannot use let binding on an object that is not an Action<IRuntimeObject>.");
-                }
-            };
-        }
 
         #endregion
     }
