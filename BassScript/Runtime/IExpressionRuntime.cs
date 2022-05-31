@@ -51,5 +51,10 @@ namespace BassClefStudio.BassScript.Runtime
         /// <param name="message">The <see cref="string"/> message to display for this <see cref="RuntimeException"/>.</param>
         /// <param name="inner">The inner exception that is the cause of the current <see cref="RuntimeException"/>.</param>
         public RuntimeException(IExpression expression, string message, Exception inner) : base(message, inner) { Expression = expression; }
+
+        public override string ToString()
+        {
+            return $"{Expression}{Environment.NewLine}{base.ToString()}";
+        }
     }
 }

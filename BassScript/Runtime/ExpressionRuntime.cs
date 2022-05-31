@@ -1,4 +1,6 @@
-﻿using BassClefStudio.BassScript.Data;
+﻿using System.Collections;
+using System.Reflection;
+using BassClefStudio.BassScript.Data;
 using CommunityToolkit.Diagnostics;
 using static System.String;
 
@@ -9,23 +11,34 @@ namespace BassClefStudio.BassScript.Runtime
     /// </summary>
     public class ExpressionRuntime : IExpressionRuntime
     {
-        #region Execution
+#region Execution
 
         /// <inheritdoc/>
         public async Task<object?> ExecuteAsync(IExpression expression, RuntimeContext context)
         {
-            return expression switch
+            try
             {
-                BinaryOperation binary => await ExecuteAsync(binary, context),
-                UnaryOperation unary => await ExecuteAsync(unary, context),
-                FunctionCall function => await ExecuteAsync(function, context),
-                Identifier identifier => context[identifier.Name],
-                ILiteral literal => literal.GetValue(),
-                _ => throw new RuntimeException(expression, "Could not handle the provided kind of expression.")
-            };
+                return expression switch
+                {
+                    BinaryOperation binary => await ExecuteAsync(binary, context),
+                    UnaryOperation unary => await ExecuteAsync(unary, context),
+                    FunctionCall function => await ExecuteAsync(function, context),
+                    Identifier identifier => context[identifier.Name],
+                    ILiteral literal => literal.GetValue(),
+                    _ => throw new RuntimeException(expression, "Could not handle the provided kind of expression.")
+                };
+            }
+            catch (RuntimeException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new RuntimeException(expression, "Executing the given expression threw an exception.", ex);
+            }
         }
 
-        #region Sub-Evaluations
+#region Sub-Evaluations
 
         /// <summary>
         /// Executes a <see cref="RuntimeMethod"/> encapsulated by the provided <see cref="IExpression"/>.
@@ -76,10 +89,20 @@ namespace BassClefStudio.BassScript.Runtime
                     {
                         return await ExecuteAsync(binary.ArgB, context.SetSelf(runtimeObject));
                     }
-                    else
+                    else if (binary.ArgB is Identifier id)
                     {
-                        throw new RuntimeException(binary, "Cannot find property of a struct or literal type.");
+                        if (left is IDictionary dict) return dict[id.Name];
+                        else
+                        {
+                            Type leftType = left.GetType();
+                            Console.WriteLine($"Info: Using reflection over type {leftType}.");
+                            var property = leftType.GetProperty(id.Name);
+                            if (property is not null) return property.GetValue(left);
+                            var field = leftType.GetField(id.Name);
+                            if (field is not null) return field.GetValue(left);
+                        }
                     }
+                    throw new RuntimeException(binary, $"Cannot find property of the current object.");
                 }
             }
             else if (binary.Operator == BinaryOperator.Set)
@@ -91,19 +114,42 @@ namespace BassClefStudio.BassScript.Runtime
                 }
                 else
                 {
-                    throw new RuntimeException(binary, $"Cannot create a variable binding for the variable {{{binary.ArgA}}}.");
+                    throw new RuntimeException(
+                        binary,
+                        $"Cannot create a variable binding for the variable {binary.ArgA}.");
                 }
             }
-            else if (binary.Operator == BinaryOperator.Equate)
+            else if (binary.Operator == BinaryOperator.Define)
             {
                 if (binary.ArgA is Identifier id)
                 {
-                    context[id.Name] = new RuntimeMethod(async (newContext, inputs) => await ExecuteAsync(binary.ArgB, newContext));
-                    return null;
+                    object? value = await ExecuteAsync(binary.ArgB, context);
+                    return new DefBinding(newContext => newContext[id.Name] = value);
                 }
                 else
                 {
-                    throw new RuntimeException(binary, $"Cannot create a variable binding for the variable {{{binary.ArgA}}}.");
+                    throw new RuntimeException(
+                        binary,
+                        $"Cannot create a defined binding for the variable {binary.ArgA}.");
+                }
+            }
+            else if (binary.Operator == BinaryOperator.Lambda)
+            {
+                if (binary.ArgA is LambdaInputs ins)
+                {
+                    return new RuntimeMethod(
+                        async (newContext, inputs) => await ExecuteAsync(
+                            binary.ArgB,
+                            newContext.Copy(
+                                ins.InputNames.Zip(inputs).Select(
+                                    i => new KeyValuePair<string, object?>(i.First.Name, i.Second))
+                                    .ToArray())));
+                }
+                else
+                {
+                    throw new RuntimeException(
+                        binary,
+                        $"Cannot create a variable binding for the variable {{{binary.ArgA}}}.");
                 }
             }
             else
@@ -233,7 +279,70 @@ namespace BassClefStudio.BassScript.Runtime
             }
         }
 
-        #endregion
-        #endregion
+#endregion
+#endregion
+#region Extension Methods
+
+        /// <summary>
+        /// Creates a strongly-typed <see cref="RuntimeMethod"/> from the given function.
+        /// </summary>
+        /// <param name="method">A function that takes a <typeparamref name="T"/> input and returns an <see cref="object"/>.</param>
+        /// <typeparam name="T">The type of the input to the <see cref="RuntimeMethod"/>.</typeparam>
+        /// <returns>The resulting <see cref="RuntimeMethod"/>.</returns>
+        public static RuntimeMethod MakeMethod<T>(Func<RuntimeContext, T, Task<object?>> method)
+            => async (context, inputs) =>
+            {
+                Guard.HasSizeEqualTo(inputs, 1, nameof(inputs));
+                object? input0 = inputs[0];
+                Guard.IsNotNull(input0, nameof(inputs));
+                Guard.IsAssignableToType<T>(input0, nameof(inputs));
+                return await method(context, (T) input0);
+            };
+
+        /// <summary>
+        /// Creates a strongly-typed <see cref="RuntimeMethod"/> from the given function.
+        /// </summary>
+        /// <param name="method">A function that takes a <typeparamref name="T1"/> and <typeparamref name="T2"/> input and returns an <see cref="object"/>.</param>
+        /// <typeparam name="T1">The type of the first input to the <see cref="RuntimeMethod"/>.</typeparam>
+        /// <typeparam name="T2">The type of the second input to the <see cref="RuntimeMethod"/>.</typeparam>
+        /// <returns>The resulting <see cref="RuntimeMethod"/>.</returns>
+        public static RuntimeMethod MakeMethod<T1, T2>(Func<RuntimeContext, T1, T2, Task<object?>> method)
+            => async (context, inputs) =>
+            {
+                Guard.HasSizeEqualTo(inputs, 2, nameof(inputs));
+                object? input0 = inputs[0];
+                object? input1 = inputs[1];
+                Guard.IsNotNull(input0, nameof(inputs));
+                Guard.IsNotNull(input1, nameof(inputs));
+                Guard.IsAssignableToType<T1>(input0, nameof(inputs));
+                Guard.IsAssignableToType<T2>(input1, nameof(inputs));
+                return await method(context, (T1) input0, (T2) input1);
+            };
+        
+        /// <summary>
+        /// Creates a strongly-typed <see cref="RuntimeMethod"/> from the given function.
+        /// </summary>
+        /// <param name="method">A function that takes a <typeparamref name="T1"/>, <typeparamref name="T2"/>, and <typeparamref name="T3"/> input and returns an <see cref="object"/>.</param>
+        /// <typeparam name="T1">The type of the first input to the <see cref="RuntimeMethod"/>.</typeparam>
+        /// <typeparam name="T2">The type of the second input to the <see cref="RuntimeMethod"/>.</typeparam>
+        /// <typeparam name="T3">The type of the third input to the <see cref="RuntimeMethod"/>.</typeparam>
+        /// <returns>The resulting <see cref="RuntimeMethod"/>.</returns>
+        public static RuntimeMethod MakeMethod<T1, T2, T3>(Func<RuntimeContext, T1, T2, T3, Task<object?>> method)
+            => async (context, inputs) =>
+            {
+                Guard.HasSizeEqualTo(inputs, 3, nameof(inputs));
+                object? input0 = inputs[0];
+                object? input1 = inputs[1];
+                object? input2 = inputs[2];
+                Guard.IsNotNull(input0, nameof(inputs));
+                Guard.IsNotNull(input1, nameof(inputs));
+                Guard.IsNotNull(input2, nameof(inputs));
+                Guard.IsAssignableToType<T1>(input0, nameof(inputs));
+                Guard.IsAssignableToType<T2>(input1, nameof(inputs));
+                Guard.IsAssignableToType<T3>(input2, nameof(inputs));
+                return await method(context, (T1) input0, (T2) input1, (T3) input2);
+            };
+        
+#endregion
     }
 }

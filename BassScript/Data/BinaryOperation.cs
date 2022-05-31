@@ -45,7 +45,7 @@
         /// <inheritdoc/>
         public override string ToString()
         {
-            return $"{{{Operator} {ArgA},{ArgB}}}";
+            return $"({Operator} {ArgA} {ArgB})";
         }
     }
 
@@ -75,9 +75,13 @@
         /// </summary>
         Set = 4,
         /// <summary>
-        /// Defines the two expressions to be equivalent or related (see => in C#, or = in mathematics).
+        /// Defines a relation (lambda expression) relating input and output expressions (see => in C#, or := in mathematics).
         /// </summary>
-        Equate = 5,
+        Lambda = 5,
+        /// <summary>
+        /// Defines a key/value relationship (see : in C# or mathematics).
+        /// </summary>
+        Define = 6,
         /// <summary>
         /// Checks whether the first value is equal to the second value.
         /// </summary>

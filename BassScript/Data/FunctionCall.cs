@@ -45,7 +45,58 @@
         /// <inheritdoc/>
         public override string ToString()
         {
-            return $"{Expression}({string.Join(",",Inputs)})";
+            return $"({Expression}{string.Concat(Inputs.Select(i => " " + i))})";
+        }
+    }
+
+    /// <summary>
+    /// An <see cref="IExpression"/> which contains a collection of named inputs to a lambda expression.
+    /// </summary>
+    public class LambdaInputs : IExpression
+    {
+        /// <summary>
+        /// A collection of the <see cref="Identifier"/>s used for the inputs to the lambda expression.
+        /// </summary>
+        public Identifier[] InputNames { get; }
+
+        /// <summary>
+        /// Creates a new <see cref="LambdaInputs"/>.
+        /// </summary>
+        /// <param name="inputs">A collection of the <see cref="Identifier"/>s used for the inputs to the lambda expression.</param>
+        public LambdaInputs(params Identifier[] inputs)
+        {
+            InputNames = inputs;
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="LambdaInputs"/>.
+        /// </summary>
+        /// <param name="inputs">A collection of the <see cref="Identifier"/>s used for the inputs to the lambda expression.</param>
+        public LambdaInputs(IEnumerable<Identifier> inputs)
+        {
+            InputNames = inputs.ToArray();
+        }
+        
+        /// <summary>
+        /// Creates a new <see cref="LambdaInputs"/>.
+        /// </summary>
+        /// <param name="inputs">A collection of the <see cref="IExpression"/>s used for the inputs to the lambda expression.</param>
+        public LambdaInputs(IEnumerable<IExpression> inputs)
+        {
+            InputNames = inputs.OfType<Identifier>().ToArray();
+        }
+
+        /// <inheritdoc/>
+        public bool Equals(IExpression? other)
+        {
+            return other is LambdaInputs ins
+                   && this.InputNames.Equals(ins.InputNames);
+        }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return $"({string.Join<Identifier>(",", InputNames)})";
         }
     }
 }

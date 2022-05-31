@@ -37,7 +37,7 @@
         /// <inheritdoc/>
         public override string ToString()
         {
-            return $"{{{Operator} {Arg}}}";
+            return $"({Operator} {Arg})";
         }
     }
 

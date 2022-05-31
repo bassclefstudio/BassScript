@@ -71,5 +71,13 @@ namespace BassClefStudio.BassScript.Runtime
         /// <returns>The resulting <see cref="RuntimeContext"/>.</returns>
         public RuntimeContext SetSelf(IRuntimeObject? me, params KeyValuePair<string, object?>[] locals) 
             => new RuntimeContext(Core, new Dictionary<string, object?>(locals), me);
+        
+        /// <summary>
+        /// Creates a copy of the <see cref="RuntimeContext"/> with a new local scope.
+        /// </summary>
+        /// <param name="locals">A set of <see cref="KeyValuePair{TKey,TValue}"/> local parameters to set in the new context.</param>
+        /// <returns>The resulting <see cref="RuntimeContext"/>.</returns>
+        public RuntimeContext Copy(params KeyValuePair<string, object?>[] locals)
+            => new RuntimeContext(Core, new Dictionary<string, object?>(Local.Concat(locals)), Me);
     }
 }

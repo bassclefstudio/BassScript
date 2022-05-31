@@ -1,4 +1,5 @@
 ﻿using BassClefStudio.BassScript.Data;
+using BassClefStudio.BassScript.Runtime;
 using Pidgin;
 using Pidgin.Expression;
 using static Pidgin.Parser;
@@ -30,7 +31,7 @@ namespace BassClefStudio.BassScript.Parsers
         private Parser<char, Func<IExpression, IExpression, IExpression>> Divide;
 
         private Parser<char, Func<IExpression, IExpression, IExpression>> Set;
-        private Parser<char, Func<IExpression, IExpression, IExpression>> Equate;
+        private Parser<char, Func<IExpression, IExpression, IExpression>> Define;
         private Parser<char, Func<IExpression, IExpression, IExpression>> Property;
 
         private Parser<char, Func<IExpression, IExpression, IExpression>> EqualTo;
@@ -48,11 +49,6 @@ namespace BassClefStudio.BassScript.Parsers
         private Parser<char, IExpression> String;
         private Parser<char, IExpression> Boolean;
         private Parser<char, IExpression> Identifier;
-
-        private Parser<char, Func<IExpression, IExpression>> Call(Parser<char, IExpression> subExpr)
-            => Parenthesised(subExpr.Separated(Token(",")))
-                .Select<Func<IExpression, IExpression>>(args => method => new FunctionCall(method, args))
-                .Labelled("function");
 
         /// <summary>
         /// A <see cref="Parser{TToken, T}"/> which takes in text input and parses an <see cref="IExpression"/> AST.
@@ -79,10 +75,15 @@ namespace BassClefStudio.BassScript.Parsers
                 .Labelled("double");
 
             var escapedString =
-                AnyCharExcept('\"', '\\')
-                .Or(Char('\\').Then(Any))
-                .ManyString()
-                .Between(Char('\"'));
+                OneOf(
+                    AnyCharExcept('\"', '\\')
+                        .Or(Char('\\').Then(Any))
+                        .ManyString()
+                        .Between(Char('\"')),
+                    AnyCharExcept('\'', '\\')
+                        .Or(Char('\\').Then(Any))
+                        .ManyString()
+                        .Between(Char('\'')));
 
             String = Token(escapedString)
                 .Select<IExpression>(value => new StringExpression(value))
@@ -105,7 +106,7 @@ namespace BassClefStudio.BassScript.Parsers
             Divide = Binary(Token("/").ThenReturn(BinaryOperator.Divide));
 
             Set = Binary(Token("=").ThenReturn(BinaryOperator.Set));
-            Equate = Binary(Token("=>").ThenReturn(BinaryOperator.Equate));
+            Define = Binary(Token(":").ThenReturn(BinaryOperator.Define));
             Property = Binary(Token(".").ThenReturn(BinaryOperator.Property));
 
             EqualTo = Binary(Token("==").ThenReturn(BinaryOperator.EqualTo));
@@ -118,40 +119,61 @@ namespace BassClefStudio.BassScript.Parsers
             Negative = Unary(Token("-").ThenReturn(UnaryOperator.Negative));
             Not = Unary(Token("!").ThenReturn(UnaryOperator.Not));
 
-            Expression = Pidgin.Expression.ExpressionParser.Build<char, IExpression>(expr => (
-                OneOf(
-                    Identifier,
-                    Boolean,
-                    String,
-                    Try(Double),
-                    Integer,
-                    Parenthesised(expr).Labelled("parenthetical")
-                ),
-                new OperatorTableRow<char, IExpression>[]
-                {
-                    Operator.InfixL(Property),
-                    Operator.PostfixChainable(Call(expr)),
-                    Operator.Prefix(Negative),
-                    Operator.Prefix(Not),
-                    Operator.InfixL(Multiply)
-                    .And(Operator.InfixL(Divide)),
-                    Operator.InfixL(Add)
-                    .And(Operator.InfixL(Subtract)),
-                    Operator.InfixN(EqualTo)
-                    .And(Operator.InfixN(NotEqualTo))
-                    .And(Operator.InfixN(GThan))
-                    .And(Operator.InfixN(GThanEq))
-                    .And(Operator.InfixN(LThan))
-                    .And(Operator.InfixN(LThanEq)),
-                    Operator.InfixN(Equate)
-                    .And(Operator.InfixN(Set))
-                })).Labelled("expression");
+            Parser<char, Func<IExpression, IExpression>> Call(Parser<char, IExpression> subExpr)
+                => Parenthesised(subExpr.Separated(Token(",")))
+                    .Select<Func<IExpression, IExpression>>(args => method => new FunctionCall(method, args))
+                    .Labelled("function");
+
+            Parser<char, Func<IExpression, IExpression>> Equate()
+                => Try(Parenthesised(Identifier.Separated(Token(",")))
+                    .Or(Identifier.Select<IEnumerable<IExpression>>(i => new[] {i})).Before(Token(":=")))
+                    .Select<Func<IExpression, IExpression>>(
+                        args => method => new BinaryOperation(new LambdaInputs(args), method, BinaryOperator.Lambda))
+                    .Labelled("lambda expression");
+            
+            Expression = Pidgin.Expression.ExpressionParser.Build<char, IExpression>(
+                expr => (
+                    OneOf(
+                        Identifier,
+                        Boolean,
+                        String,
+                        Try(Double),
+                        Integer,
+                        Parenthesised(expr).Labelled("parenthetical")
+                    ),
+                    new OperatorTableRow<char, IExpression>[]
+                    {
+                        Operator.InfixL(Property),
+                        Operator.PostfixChainable(Call(expr)),
+                        Operator.Prefix(Negative),
+                        Operator.Prefix(Not),
+                        Operator.InfixL(Multiply)
+                            .And(Operator.InfixL(Divide)),
+                        Operator.InfixL(Add)
+                            .And(Operator.InfixL(Subtract)),
+                        Operator.InfixN(EqualTo)
+                            .And(Operator.InfixN(NotEqualTo))
+                            .And(Operator.InfixN(GThan))
+                            .And(Operator.InfixN(GThanEq))
+                            .And(Operator.InfixN(LThan))
+                            .And(Operator.InfixN(LThanEq)),
+                        Operator.PrefixChainable(Equate()),
+                        Operator.InfixN(Define)
+                            .And(Operator.InfixN(Set))
+                    })).Labelled("expression");
         }
 
         /// <inheritdoc/>
         public IExpression BuildExpression(string input)
         {
-            return Expression.ParseOrThrow(input);
+            try
+            {
+                return Expression.ParseOrThrow(input);
+            }
+            catch (ParseException ex)
+            {
+                throw new CompileException(input, ex);
+            }
         }
     }
 }
