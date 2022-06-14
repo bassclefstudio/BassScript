@@ -166,14 +166,7 @@ namespace BassClefStudio.BassScript.Parsers
         /// <inheritdoc/>
         public IExpression BuildExpression(string input)
         {
-            try
-            {
-                return Expression.ParseOrThrow(input);
-            }
-            catch (ParseException ex)
-            {
-                throw new CompileException(input, ex);
-            }
+            return Expression.ParseOrThrow(input);
         }
     }
 

@@ -4,9 +4,6 @@ on:
   pull_request:
     branches:
     - main
-    paths:
-    - '**.cs'
-    - '**.csproj'
 
 jobs:
   build:
@@ -24,4 +21,4 @@ jobs:
     - name: Build
       run: dotnet build --configuration Debug --no-restore
     - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      run: dotnet test --no-restore --configuration Debug --verbosity normal
