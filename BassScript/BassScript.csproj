@@ -1,19 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<AssemblyName>BassClefStudio.BassScript.Core</AssemblyName>
+		
+		<AssemblyName>BassClefStudio.BassScript</AssemblyName>
 		<RootNamespace>BassClefStudio.BassScript</RootNamespace>
+		
+		<PackageId>BassScript</PackageId>
 		<Authors>BassClefStudio</Authors>
-		<Description>The core library for the BassScript project, designed to create a cross-platform math and programming language and toolset.</Description>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<Description>Provides a compiler/interpreter and basic runtime for a loosely-typed scripting language that can be easily added and extended in other projects.</Description>
+		<PackageProjectUrl>https://github.com/bassclefstudio/BassScript</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/bassclefstudio/BassScript.git</RepositoryUrl>
+		<PackageTags>compiler;script;BassScript</PackageTags>
+		<PackageReleaseNotes>Initial release.</PackageReleaseNotes>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Diagnostics" Version="7.1.2" />
 		<PackageReference Include="Pidgin" Version="3.1.0" />
 	</ItemGroup>
-
 </Project>

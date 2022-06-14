@@ -176,4 +176,25 @@ namespace BassClefStudio.BassScript.Parsers
             }
         }
     }
+
+    /// <summary>
+    /// An <see cref="Exception"/> thrown when an expression could not be parsed into its resulting <see cref="IExpression"/> equivalent.
+    /// </summary>
+    [Serializable]
+    public class CompileException : Exception
+    {
+        /// <inheritdoc/>
+        public CompileException() { }
+
+        /// <inheritdoc/>
+        public CompileException(string message) : base(message) { }
+
+        /// <inheritdoc/>
+        public CompileException(string message, Exception inner) : base(message, inner) { }
+        
+        /// <inheritdoc/>
+        protected CompileException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+    }
 }
