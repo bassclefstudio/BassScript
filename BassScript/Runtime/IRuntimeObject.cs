@@ -22,6 +22,26 @@ namespace BassClefStudio.BassScript.Runtime
     }
 
     /// <summary>
+    /// Provides a basic <see cref="IRuntimeObject"/> wrapper over an <see cref="IDictionary{TKey, TValue}"/> which manages a collection of key/value pairs as a complex object instead of an <see cref="IEnumerable{T}"/> of pairs.
+    /// </summary>
+    /// <param name="Data">The <see cref="IDictionary{TKey, TValue}"/> from which to create this <see cref="RuntimeObject"/>.</param>
+    public record RuntimeObject(IDictionary<string, object?> Data) : IRuntimeObject
+    {
+        /// <inheritdoc/>
+        public object? this[string key]
+        {
+            get => Data[key];
+            set => Data[key] = value;
+        }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return "{" + string.Join(", ", Data.Select(p => $"{p.Key}: {p.Value}")) + "}";
+        }
+    }
+
+    /// <summary>
     /// Represents an asynchronous method which can be a member of an <see cref="IRuntimeObject"/>.
     /// </summary>
     /// <param name="context">The <see cref="RuntimeContext"/> used as the runtime context for where this <see cref="RuntimeMethod"/> is executed.</param>
