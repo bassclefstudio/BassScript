@@ -9,6 +9,7 @@
 		<RootNamespace>BassClefStudio.BassScript</RootNamespace>
 		
 		<PackageId>BassScript</PackageId>
+		<Version>1.0.1</Version>
 		<Authors>BassClefStudio</Authors>
 		<Description>Provides a compiler/interpreter and basic runtime for a loosely-typed scripting language that can be easily added and extended in other projects.</Description>
 		<PackageProjectUrl>https://github.com/bassclefstudio/BassScript</PackageProjectUrl>
